@@ -9,4 +9,10 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- Strings used for what am I doing part-->
+    <string name="hello_what_am_i_doing_fragment">Hello what am I doing fragment</string>
+    <string name="what_am_i_doing_fragment">What am I doing</string>
+    <string name="get_events">Get events</string>
+
 </resources>

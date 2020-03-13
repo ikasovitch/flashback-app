@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_whatAmIDoing"
+            app:destination="@id/whatAmIDoing" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -23,6 +26,14 @@
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/whatAmIDoing"
+        android:name="com.flashbackapp.WhatAmIDoing"
+        android:label="WhatAmIDoing" >
+        <action
+            android:id="@+id/action_whatAmIDoing_to_FirstFragment"
             app:destination="@id/FirstFragment" />
     </fragment>
 </navigation>

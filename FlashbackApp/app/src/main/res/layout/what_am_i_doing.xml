@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/get_events_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="168dp"
+        android:layout_marginEnd="150dp"
+        android:layout_marginBottom="280dp"
+        android:text="Get events"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/what_am_i_doing_title"
+        app:layout_constraintVertical_bias="0.486"
+        tools:text="@string/get_events"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/what_am_i_doing_title"
+        android:layout_width="305dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="228dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="151dp"
+        android:text="What am I doing"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toTopOf="@+id/get_events_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/hello_what_am_i_doing_fragment" />
+</androidx.constraintlayout.widget.ConstraintLayout>

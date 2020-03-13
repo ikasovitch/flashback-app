@@ -1,5 +1,7 @@
 package com.flashbackapp;
 
+import android.Manifest;
+import android.os.Binder;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -7,13 +9,17 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import static android.Manifest.permission.READ_CALENDAR;
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+//        enforcePermission(READ_CALENDAR, Binder.getCallingPid(), Binder.getCallingUid(), "Permission to read calender is needed");
     }
 
     @Override
