@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "393254190569",
+    "firebase_url": "https://shai-mfh-3586.firebaseio.com",
+    "project_id": "shai-mfh-3586",
+    "storage_bucket": "shai-mfh-3586.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393254190569:android:9ad3aef2aa19391db85f78",
+        "android_client_info": {
+          "package_name": "com.flashbackapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393254190569-sa9rm8avi2evbr4u1be1595se7g8rs39.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flashbackapp",
+            "certificate_hash": "47cd3cb55336fe53637dd88ac630a34700ac9034"
+          }
+        },
+        {
+          "client_id": "393254190569-ot3cakfpu12ps112v0bgrkmmbdpbiibg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOeq_AqkQA30KeXCkgiJGLDLK86UQl_lY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393254190569-f1upa195ael5brvkm3a1g0q195g01n9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

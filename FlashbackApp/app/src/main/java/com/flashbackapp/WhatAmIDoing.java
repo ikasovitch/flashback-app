@@ -11,16 +11,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Objects;
 
-public class WhatAmIDoing extends Fragment {
+public class WhatAmIDoing extends AppCompatActivity {
     private static final String DEBUG_TAG = "MyActivity";
     private static final String[] INSTANCE_PROJECTION = new String[] {
             CalendarContract.Instances.EVENT_ID,      // 0
@@ -34,12 +30,16 @@ public class WhatAmIDoing extends Fragment {
     private static final int PROJECTION_TITLE_INDEX = 2;
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.what_am_i_doing, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.what_am_i_doing);
+
+        findViewById(R.id.get_events_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getEventFromGoogleCalendar();
+            }
+        });
     }
 
     public void syncWithGoogleCalendar() {
@@ -58,7 +58,7 @@ public class WhatAmIDoing extends Fragment {
         endTime.set(2020, 3, 20, 8, 0);
         long endMillis = endTime.getTimeInMillis();
 
-        ContentResolver cr = Objects.requireNonNull(getActivity()).getContentResolver();
+        ContentResolver cr = getContentResolver();
 
         // The ID of the recurring event whose instances you are searching
         // for in the Instances table
@@ -95,16 +95,5 @@ public class WhatAmIDoing extends Fragment {
             DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
             Log.i(DEBUG_TAG, "Date: " + formatter.format(calendar.getTime()));
         }
-    }
-
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        view.findViewById(R.id.get_events_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getEventFromGoogleCalendar();
-            }
-        });
     }
 }
