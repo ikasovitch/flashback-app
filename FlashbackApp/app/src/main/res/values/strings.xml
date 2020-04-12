@@ -13,8 +13,10 @@
     <!-- Strings used for what am I doing part-->
     <string name="hello_what_am_i_doing_fragment">Hello what am I doing fragment</string>
     <string name="title_activity_what_am_i_doing">What am I doing</string>
-    <string name="what_am_i_doing_fragment">What am I doing</string>
+    <string name="what_am_i_doing">What am I doing</string>
     <string name="get_events">Get events</string>
+    <string name="no_upcoming_events">No upcoming events</string>
+
 
     <!-- Strings for google authentication-->
     <string name="title_activity_login">Google Sign-In\nQuickstart</string>

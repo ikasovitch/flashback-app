@@ -1,99 +1,108 @@
 package com.flashbackapp;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.database.Cursor;
-import android.icu.text.DateFormat;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
-import android.net.Uri;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class WhatAmIDoing extends AppCompatActivity {
-    private static final String DEBUG_TAG = "MyActivity";
-    private static final String[] INSTANCE_PROJECTION = new String[] {
-            CalendarContract.Instances.EVENT_ID,      // 0
-            CalendarContract.Instances.BEGIN,         // 1
-            CalendarContract.Instances.TITLE          // 2
-    };
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
-    // The indices for the projection array above.
-    private static final int PROJECTION_ID_INDEX = 0;
-    private static final int PROJECTION_BEGIN_INDEX = 1;
-    private static final int PROJECTION_TITLE_INDEX = 2;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Events;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.List;
+
+public class WhatAmIDoing extends AppCompatActivity {
+    final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+    private static final int REQUEST_AUTHORIZATION = 2;
+    GoogleAccountCredential credential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.what_am_i_doing);
+        setContentView(R.layout.activity_what_am_i_doing);
 
-        findViewById(R.id.get_events_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getEventFromGoogleCalendar();
-            }
-        });
-    }
+        // Google Accounts
+        credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(CalendarScopes.CALENDAR));
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        assert acct != null;
+        credential.setSelectedAccountName(acct.getEmail());
 
-    public void syncWithGoogleCalendar() {
-
-    }
-
-    @SuppressLint("Recycle")
-    private void getEventFromGoogleCalendar() {
-
-        // Specify the date range you want to search for recurring
-        // event instances
-        Calendar beginTime = Calendar.getInstance();
-        beginTime.set(2020, 3, 12, 8, 0);
-        long startMillis = beginTime.getTimeInMillis();
-        Calendar endTime = Calendar.getInstance();
-        endTime.set(2020, 3, 20, 8, 0);
-        long endMillis = endTime.getTimeInMillis();
-
-        ContentResolver cr = getContentResolver();
-
-        // The ID of the recurring event whose instances you are searching
-        // for in the Instances table
-        String selection = CalendarContract.Instances.EVENT_ID + " = ?";
-        String[] selectionArgs = new String[] {"207"};
-
-        // Construct the query with the desired date range.
-        Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, startMillis);
-        ContentUris.appendId(builder, endMillis);
-
-        // Submit the query
-        Cursor cur =  cr.query(builder.build(),
-                INSTANCE_PROJECTION,
-                selection,
-                selectionArgs,
-                null);
-
-        assert cur != null;
-        while (cur.moveToNext()) {
-            String title = null;
-            long eventID = 0;
-            long beginVal = 0;
-
-            // Get the field values
-            eventID = cur.getLong(PROJECTION_ID_INDEX);
-            beginVal = cur.getLong(PROJECTION_BEGIN_INDEX);
-            title = cur.getString(PROJECTION_TITLE_INDEX);
-
-            // Do something with the values.
-            Log.i(DEBUG_TAG, "Event:  " + title);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(beginVal);
-            DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-            Log.i(DEBUG_TAG, "Date: " + formatter.format(calendar.getTime()));
+        try {
+            getEventFromGoogleCalendar();
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
         }
+    }
+
+
+    private void getEventFromGoogleCalendar() throws IOException, GeneralSecurityException {
+        // List the next 10 events from the primary calendar.
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, List<Event>> task = new AsyncTask<Void, Void, List<Event>>() {
+            @Override
+            protected List<Event> doInBackground(Void... params) {
+                final NetHttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+                Calendar service = new Calendar.Builder(HTTP_TRANSPORT, jsonFactory, credential)
+                        .setApplicationName("FlashbackApp")
+                        .build();
+                DateTime now = new DateTime(System.currentTimeMillis());
+                List<Event> items = null;
+                try {
+                    Events events = service.events().list("primary")
+                            .setMaxResults(10)
+                            .setTimeMin(now)
+                            .setOrderBy("startTime")
+                            .setSingleEvents(true)
+                            .execute();
+                    items = events.getItems();
+
+                } catch (UserRecoverableAuthIOException e) {
+                    startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return items;
+            }
+
+            @Override
+            protected void onPostExecute(List<Event> items) {
+                if (!items.isEmpty()) {
+                    TextView events_data_text = findViewById(R.id.events_data_text);
+                    System.out.println("Upcoming events");
+                    for (Event event : items) {
+                        DateTime start = event.getStart().getDateTime();
+                        DateTime end = event.getEnd().getDateTime();
+                        if (start == null) {
+                            start = event.getStart().getDate();
+                        }
+                        if (end == null) {
+                            end = event.getEnd().getDate();
+                        }
+                        String events_data = "Title: " + event.getSummary() + "\nStart: " + start + "\nEnd: " + end;
+                        events_data_text.setText(events_data);
+                        events_data_text.setVisibility(View.VISIBLE);
+                        System.out.print(events_data);
+                    }
+                }
+            }
+        };
+        task.execute();
     }
 }
