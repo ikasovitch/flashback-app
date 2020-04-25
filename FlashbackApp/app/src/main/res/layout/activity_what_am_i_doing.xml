@@ -34,5 +34,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/hello_what_am_i_doing_fragment" />
+        tools:text="@string/hello_what_am_i_doing_fragment"
+        />
+
+        <Button
+            android:id="@+id/ReturnToMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/events_data_text"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

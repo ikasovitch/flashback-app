@@ -2,12 +2,14 @@ package com.flashbackapp;
 
 import android.annotation.SuppressLint;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -23,7 +25,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-
+import com.google.firebase.auth.FirebaseUser;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -33,6 +35,8 @@ public class WhatAmIDoing extends AppCompatActivity {
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
     private static final int REQUEST_AUTHORIZATION = 2;
     GoogleAccountCredential credential;
+    private static final String ARG_NAME = "username";
+    FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +49,21 @@ public class WhatAmIDoing extends AppCompatActivity {
         assert acct != null;
         credential.setSelectedAccountName(acct.getEmail());
 
+        findViewById(R.id.ReturnToMain).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                launchMainActivity(user);
+            }
+        });
+        firebaseAuth = FirebaseAuth.getInstance();
+
         try {
             getEventFromGoogleCalendar();
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
     }
-
 
     private void getEventFromGoogleCalendar() throws IOException, GeneralSecurityException {
         // List the next 10 events from the primary calendar.
@@ -105,4 +117,13 @@ public class WhatAmIDoing extends AppCompatActivity {
         };
         task.execute();
     }
+
+    public void launchMainActivity(FirebaseUser user) {
+        if (user != null) {
+            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+            intent.putExtra(ARG_NAME, user.getDisplayName());
+            startActivity(intent);
+        }
+    }
 }
+

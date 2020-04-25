@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     >
+    <TextView
+        android:id="@+id/textViewWelcome"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/hello_first_fragment"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
     <Button
         android:id="@+id/buttonWhatAmIDoing"
         android:layout_width="wrap_content"
@@ -24,9 +35,10 @@
         android:layout_marginBottom="16dp"
         android:text="@string/sign_out"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDisconnect"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDisconnect"
         />
     <Button
         android:id="@+id/buttonDisconnect"
@@ -37,17 +49,35 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonShayStory"
         />
-    <TextView
-        android:id="@+id/textViewWelcome"
-        android:layout_width="0dp"
+
+    <Button
+        android:id="@+id/buttonShayStory"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="@string/hello_first_fragment"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/buttonWhatAmIDoing"
+        android:layout_marginBottom="16dp"
+        android:text="Shay story"
+        android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ButtonEmergencyNumber"
+        android:gravity="center"
         />
+
+    <Button
+        android:id="@+id/ButtonEmergencyNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Emergency call"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonShayStory"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

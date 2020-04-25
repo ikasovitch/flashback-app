@@ -75,4 +75,7 @@
 
     <string name="user_name">username</string>
 
+
+    <string name="title_activity_my_story">Shai story</string>
+
 </resources>
