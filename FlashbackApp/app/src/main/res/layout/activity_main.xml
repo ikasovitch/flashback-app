@@ -67,15 +67,28 @@
         />
 
     <Button
-        android:id="@+id/ButtonEmergencyNumber"
+    android:id="@+id/ButtonEmergencyNumber"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:text="Emergency call"
+    android:textAllCaps="false"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/buttonShayStory"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:gravity="center"
+    />
+
+    <Button
+        android:id="@+id/ButtonSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Emergency call"
+        android:text="Setting"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonShayStory"
         app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center"
         />

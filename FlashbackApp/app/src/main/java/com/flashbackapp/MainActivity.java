@@ -29,6 +29,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -76,6 +78,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 CallEmergencyNumber();
+            }
+        });
+
+        findViewById(R.id.ButtonSetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchShaySettingActivity();
             }
         });
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
@@ -162,40 +171,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void CallEmergencyNumber() {
-        DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
-        DatabaseReference name = primary.child("name");
-        DatabaseReference number = primary.child("number");
-        name.addValueEventListener(new ValueEventListener() {
+    private void launchShaySettingActivity() {
+        Intent intent = new Intent(getBaseContext(), SettingActivity.class);
+        startActivity(intent);
+    }
+
+    private void CallEmergencyNumber() {   DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
+        primary.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                System.out.println("name");
-                System.out.println(value);
-                // ...
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "listener canceled", databaseError.toException());
-            }
-        });
-
-        number.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String phone_number = dataSnapshot.getValue(String.class);
-                System.out.println("number");
-                System.out.println(phone_number);
-                try {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    String name = childSnapshot.getKey();
+                    String phone_number = Objects.requireNonNull(childSnapshot.child("number").getValue()).toString();
+                    String image = Objects.requireNonNull(childSnapshot.child("picture").getValue()).toString();
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:"+phone_number));
                     if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
                         return;
                     }
                     startActivity(callIntent);
-                } catch (ActivityNotFoundException activityException) {
-                    Log.e("Calling a Phone Number", "Call failed", activityException);
+                    // ...
                 }
             }
 
@@ -204,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.w(TAG, "listener canceled", databaseError.toException());
             }
         });
+
     }
 
 }

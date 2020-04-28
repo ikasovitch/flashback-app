@@ -35,6 +35,11 @@
             android:label="@string/title_activity_my_story"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".SettingActivity"
+            android:label="Setting"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
 
     </application>
 </manifest>
