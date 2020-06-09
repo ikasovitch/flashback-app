@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class ShayStory extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -33,6 +34,13 @@ public class ShayStory extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.SaveNewStory).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveStory(view);
+            }
+        });
+
         firebaseAuth = FirebaseAuth.getInstance();
         ShowStory();
     }
@@ -44,9 +52,8 @@ public class ShayStory extends AppCompatActivity {
     }
 
     public void PrintText(String story) {
-        TextView shai_story = findViewById(R.id.ShayStoryText);
-        shai_story.setText(story);
-        shai_story.setVisibility(View.VISIBLE);
+        TextView storyInputContentView = findViewById(R.id.StoryInputContent);
+        storyInputContentView.setText(story);
         System.out.print(story);
     }
 
@@ -73,6 +80,26 @@ public class ShayStory extends AppCompatActivity {
             intent.putExtra(ARG_NAME, user.getDisplayName());
             startActivity(intent);
         }
+    }
+
+    public void saveStory(View view) {
+        TextView storyInputContentView = findViewById(R.id.StoryInputContent);
+        CharSequence newContent = storyInputContentView.getText();
+        System.out.println(newContent);
+        byte[] content_bute_array = newContent.toString().getBytes();
+        StorageReference fileReference = GetReferenceToFirebaseFile();
+        UploadTask uploadTask = fileReference.putBytes(content_bute_array);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                System.out.println("New shay story failed to write to firebase");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                System.out.println("New shay story written successfully to firebase");
+            }
+        });
     }
 
 }
