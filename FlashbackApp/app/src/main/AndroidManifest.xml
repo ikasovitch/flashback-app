@@ -3,7 +3,9 @@
     package="com.flashbackapp">
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -38,6 +40,11 @@
         <activity
             android:name=".SettingActivity"
             android:label="Setting"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".LocationsActivity"
+            android:label="Locations"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 

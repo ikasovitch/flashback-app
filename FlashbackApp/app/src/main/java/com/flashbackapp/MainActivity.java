@@ -87,6 +87,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 launchShaySettingActivity();
             }
         });
+        findViewById(R.id.ButtonLocations).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchShayLocationsActivity();
+            }
+        });
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -173,6 +179,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void launchShaySettingActivity() {
         Intent intent = new Intent(getBaseContext(), SettingActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchShayLocationsActivity() {
+        Intent intent = new Intent(getBaseContext(), LocationsActivity.class);
         startActivity(intent);
     }
 
