@@ -20,7 +20,7 @@
         <LinearLayout
             android:id="@+id/titleLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@color/gray_light"
             android:orientation="vertical">
@@ -28,24 +28,41 @@
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="32dp"
+                android:textSize="20sp"
                 android:text="@string/good_morning_shay" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/buttonWhatAmIDoing"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:text="@string/what_am_i_doing"
-            android:textAllCaps="false" />
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:progress="0"
+                android:background="@color/noon"
+                android:textAlignment="center"
+                android:id="@+id/progressBar" />
+            <TextView
+                android:id="@+id/barTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:textSize="20sp"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
 
         <Button
             android:id="@+id/buttonShayStory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:text="Shay story"
+            android:text="הסיפור"
             android:textAllCaps="false" />
 
         <Button
@@ -54,7 +71,7 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:drawableStart="@drawable/ringing_phone"
-            android:text="Emergency call"
+            android:text="שיחת חירום"
             android:paddingStart="17dp"
             android:background="@color/emergency"
             android:textAllCaps="false" />
@@ -63,7 +80,7 @@
             android:id="@+id/ButtonEmergencySMS"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Emergency SMS"
+            android:text="הודעת חירום"
             android:layout_margin="5dp"
             android:textAllCaps="false" />
 
@@ -71,7 +88,7 @@
             android:id="@+id/ButtonLocations"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Locations"
+            android:text="מיקום"
             android:layout_margin="5dp"
             android:textAllCaps="false" />
 
@@ -80,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:text="Settings"
+            android:text="הגדרות"
             android:textAllCaps="false" />
 
         <Button
@@ -88,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:text="@string/sign_out"
+            android:text="התנתק"
             android:textAllCaps="false" />
 
     </LinearLayout>

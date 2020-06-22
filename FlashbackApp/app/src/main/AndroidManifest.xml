@@ -29,11 +29,6 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".WhatAmIDoing"
-            android:label="@string/title_activity_what_am_i_doing"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
             android:name=".ShayStory"
             android:label="@string/title_activity_my_story"
             android:theme="@style/AppTheme.NoActionBar">

@@ -8,14 +8,26 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import com.google.api.client.json.JsonFactory;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Events;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,10 +43,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -43,6 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String ARG_NAME = "username";
     final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     private DatabaseReference mDatabase;
+    GoogleAccountCredential credential;
+    private static final int REQUEST_AUTHORIZATION = 2;
+    final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+    boolean withoutSignIn = true;
+
 
     FirebaseAuth firebaseAuth;
     GoogleSignInClient googleSignInClient;
@@ -63,14 +86,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 //        });
 
+        // Google Accounts
+        if (withoutSignIn) {
+            ProgressBar progressBar = findViewById(R.id.progressBar);
+            TextView barTitle = findViewById(R.id.barTitle);
+            progressBar.setProgress(70);
+            barTitle.setText("אימון זיכרון");
+        } else {
+            credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(CalendarScopes.CALENDAR));
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            assert acct != null;
+            credential.setSelectedAccountName(acct.getEmail());
+            firebaseAuth = FirebaseAuth.getInstance();
+
+            try {
+                getEventFromGoogleCalendar();
+            } catch (IOException | GeneralSecurityException e) {
+                e.printStackTrace();
+            }
+        }
         setTitle();
         findViewById(R.id.buttonLogout).setOnClickListener(this);
-        findViewById(R.id.buttonWhatAmIDoing).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchWhatAmIDoingActivity();
-            }
-        });
         findViewById(R.id.buttonShayStory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -191,11 +227,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void launchWhatAmIDoingActivity() {
-        Intent intent = new Intent(getBaseContext(), WhatAmIDoing.class);
-        startActivity(intent);
-    }
-
     private void launchShayStoryActivity() {
         Intent intent = new Intent(getBaseContext(), ShayStory.class);
         startActivity(intent);
@@ -256,6 +287,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+    }
+
+    private void getEventFromGoogleCalendar() throws IOException, GeneralSecurityException {
+        // List the next 10 events from the primary calendar.
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, List<Event>> task = new AsyncTask<Void, Void, List<Event>>() {
+            @Override
+            protected List<Event> doInBackground(Void... params) {
+                final NetHttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+                com.google.api.services.calendar.Calendar service = new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT, jsonFactory, credential)
+                        .setApplicationName("FlashbackApp")
+                        .build();
+                DateTime now = new DateTime(System.currentTimeMillis());
+                List<Event> items = null;
+                try {
+                    Events events = service.events().list("primary")
+                            .setMaxResults(10)
+                            .setTimeMin(now)
+                            .setOrderBy("startTime")
+                            .setSingleEvents(true)
+                            .execute();
+                    items = events.getItems();
+                } catch (UserRecoverableAuthIOException e) {
+                    startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return items;
+            }
+
+            @Override
+            protected void onPostExecute(List<Event> items) {
+                if (!items.isEmpty()) {
+                    ProgressBar progressBar = findViewById(R.id.progressBar);
+                    TextView barTitle = findViewById(R.id.barTitle);
+                    System.out.println("Upcoming events");
+                    if (items.size() == 0) {
+                        progressBar.setProgress(0);
+                        barTitle.setText("אין פגישות קרובות");
+                        return;
+                    }
+                    for (Event event : items) {
+                        DateTime start = event.getStart().getDateTime();
+                        DateTime end = event.getEnd().getDateTime();
+                        if (start == null) {
+                            start = event.getStart().getDate();
+                        }
+                        if (end == null) {
+                            end = event.getEnd().getDate();
+                        }
+                        String events_data = event.getSummary();
+                        long totalMeeting = end.getValue() - start.getValue();
+                        System.out.println(totalMeeting);
+                        progressBar.setProgress(70);
+                        barTitle.setText(events_data);
+                        System.out.print(events_data);
+                    }
+                }
+            }
+        };
+        task.execute();
     }
 
 }
