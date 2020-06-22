@@ -26,11 +26,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -39,6 +41,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     private static final String ARG_NAME = "username";
+    final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     private DatabaseReference mDatabase;
 
     FirebaseAuth firebaseAuth;
@@ -74,10 +77,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 launchShayStoryActivity();
             }
         });
+
         findViewById(R.id.ButtonEmergencyNumber).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CallEmergencyNumber();
+                CallInbar();
+            }
+        });
+
+        findViewById(R.id.ButtonEmergencySMS).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SMSInbar();
             }
         });
 
@@ -96,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        CallEmergencyNumber();
     }
 
     private void setTitle() {
@@ -107,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (currentHour > 12 && currentHour < 18) {
             color = R.color.noon;
             titleTextString = "צהריים טובים שי";
-        } else if (currentHour > 18) {
+        } else if (currentHour > 18 || currentHour < 6) {
             titleTextString = "ערב טוב שי";
             color = R.color.evening;
         }
@@ -199,6 +209,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void launchShayLocationsActivity() {
         Intent intent = new Intent(getBaseContext(), LocationsActivity.class);
         startActivity(intent);
+    }
+
+    private void CallInbar() {
+        String phoneNumber = "+972545789677";
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:"+phoneNumber));
+        if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        startActivity(callIntent);
+    }
+
+    private void SMSInbar() {
+        String phoneNumber = "+972545789677";
+        String content = "Hi!";
+        if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(phoneNumber, null, content, null, null);
+        Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
 
     private void CallEmergencyNumber() {   DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
