@@ -1,9 +1,12 @@
 package com.flashbackapp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -29,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 
@@ -44,10 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView textView = findViewById(R.id.textViewWelcome);
-        if (getIntent().hasExtra(ARG_NAME)) {
-            textView.setText(String.format("Welcome - %s", getIntent().getStringExtra(ARG_NAME)));
-        }
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //
@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 //        });
 
+        setTitle();
         findViewById(R.id.buttonLogout).setOnClickListener(this);
-        findViewById(R.id.buttonDisconnect).setOnClickListener(this);
         findViewById(R.id.buttonWhatAmIDoing).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,6 +99,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CallEmergencyNumber();
     }
 
+    private void setTitle() {
+        TextView titleText = findViewById(R.id.titleText);
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        String titleTextString = "בוקר טוב שי";
+        int color = R.color.morning;
+        if (currentHour > 12 && currentHour < 18) {
+            color = R.color.noon;
+            titleTextString = "צהריים טובים שי";
+        } else if (currentHour > 18) {
+            titleTextString = "ערב טוב שי";
+            color = R.color.evening;
+        }
+        titleText.setText(titleTextString);
+        titleText.setBackgroundColor(color);
+        titleText.setTypeface(null, Typeface.BOLD);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -126,9 +143,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.buttonLogout:
                 signOut();
-                break;
-            case R.id.buttonDisconnect:
-                revokeAccess();
                 break;
         }
     }

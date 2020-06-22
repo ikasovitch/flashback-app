@@ -11,4 +11,9 @@
     <color name="blue_grey_900">#263238</color>
     <color name="snow">#FFFAFA</color>
     <color name="gray_light">#D3D3D3</color>
+    <color name='morning'>#F7D62F</color>
+    <color name='noon'>#66CC00</color>
+    <color name='evening'>#4894BA</color>
+    <color name='emergency'>#FF9999</color>
+
 </resources>
