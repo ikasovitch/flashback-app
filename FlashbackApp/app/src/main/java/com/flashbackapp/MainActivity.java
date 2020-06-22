@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.ButtonEmergencyNumber).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CallEmergencyNumber();
+                CallInbar();
             }
         });
 
@@ -185,6 +185,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void launchShayLocationsActivity() {
         Intent intent = new Intent(getBaseContext(), LocationsActivity.class);
         startActivity(intent);
+    }
+
+    private void CallInbar() {
+        String phone_number = "+972545789677";
+        // String image = Objects.requireNonNull(childSnapshot.child("picture").getValue()).toString();
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:"+phone_number));
+        if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        startActivity(callIntent);
     }
 
     private void CallEmergencyNumber() {   DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
