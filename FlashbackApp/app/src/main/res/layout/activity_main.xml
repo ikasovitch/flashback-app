@@ -74,7 +74,12 @@
             android:layout_height="wrap_content"
             android:text="Emergency call"
             android:textAllCaps="true" />
-
+        <Button
+            android:id="@+id/ButtonEmergencySMS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Emergency SMS"
+            android:textAllCaps="true" />
         <Button
             android:id="@+id/ButtonLocations"
             android:layout_width="wrap_content"
