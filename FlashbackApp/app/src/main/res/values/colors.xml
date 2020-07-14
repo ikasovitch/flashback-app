@@ -12,8 +12,13 @@
     <color name="snow">#FFFAFA</color>
     <color name="gray_light">#D3D3D3</color>
     <color name='morning'>#F7D62F</color>
-    <color name='noon'>#66CC00</color>
+    <color name='noon'>#beeda3</color>
     <color name='evening'>#4894BA</color>
     <color name='emergency'>#FF9999</color>
 
+    <color name='light_green'>#ddf4ce</color>
+    <color name='light_purple'>#edc5e5</color>
+    <color name='light_red'>#f97a66</color>
+    <color name='light_yellow'>#fcebaf</color>
+    <color name='light_milk'>#fdfff5</color>
 </resources>

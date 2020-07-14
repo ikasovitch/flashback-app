@@ -43,7 +43,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,9 +57,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String ARG_NAME = "username";
     final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
@@ -64,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     GoogleAccountCredential credential;
     private static final int REQUEST_AUTHORIZATION = 2;
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-    boolean withoutSignIn = true;
-
 
     FirebaseAuth firebaseAuth;
     GoogleSignInClient googleSignInClient;
@@ -87,26 +89,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        });
 
         // Google Accounts
-        if (withoutSignIn) {
-            ProgressBar progressBar = findViewById(R.id.progressBar);
-            TextView barTitle = findViewById(R.id.barTitle);
-            progressBar.setProgress(70);
-            barTitle.setText("אימון זיכרון");
-        } else {
-            credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(CalendarScopes.CALENDAR));
-            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-            assert acct != null;
-            credential.setSelectedAccountName(acct.getEmail());
-            firebaseAuth = FirebaseAuth.getInstance();
+        credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(CalendarScopes.CALENDAR));
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        assert acct != null;
+        credential.setSelectedAccountName(acct.getEmail());
+        firebaseAuth = FirebaseAuth.getInstance();
 
-            try {
-                getEventFromGoogleCalendar();
-            } catch (IOException | GeneralSecurityException e) {
-                e.printStackTrace();
-            }
+        try {
+            getEventFromGoogleCalendar();
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
         }
+
         setTitle();
-        findViewById(R.id.buttonLogout).setOnClickListener(this);
+
         findViewById(R.id.buttonShayStory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,19 +117,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        findViewById(R.id.ButtonEmergencySMS).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SMSInbar();
-            }
-        });
-
-        findViewById(R.id.ButtonSetting).setOnClickListener(new View.OnClickListener() {
+        Button settingsBtn = findViewById(R.id.ButtonSetting);
+        LinearLayout yourRelLay = (LinearLayout) settingsBtn.getParent();
+        settingsBtn.setBackground(yourRelLay.getBackground());
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchShaySettingActivity();
             }
         });
+
         findViewById(R.id.ButtonLocations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,18 +140,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setTitle() {
         TextView titleText = findViewById(R.id.titleText);
-        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        String titleTextString = "בוקר טוב שי";
-        int color = R.color.morning;
+        int currentHour = Calendar.getInstance(TimeZone.getTimeZone("Asia/Jerusalem")).get(Calendar.HOUR_OF_DAY);
+        String titleTextString = "בוקר טוב שי!";
+        int color = Color.rgb(136, 211, 211);
         if (currentHour > 12 && currentHour < 18) {
-            color = R.color.noon;
-            titleTextString = "צהריים טובים שי";
+            titleTextString = "צהריים טובים שי!";
+            color = Color.rgb(146, 210, 132);
         } else if (currentHour > 18 || currentHour < 6) {
-            titleTextString = "ערב טוב שי";
-            color = R.color.evening;
+            titleTextString = "ערב טוב שי!";
+            color = Color.rgb(112, 106, 200);
         }
+
+        titleText.setTextColor(color);
         titleText.setText(titleTextString);
-        titleText.setBackgroundColor(color);
         titleText.setTypeface(null, Typeface.BOLD);
     }
 
@@ -183,49 +177,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.buttonLogout:
-                signOut();
-                break;
-        }
-    }
-    private void signOut() {
-        // Firebase sign out
-        firebaseAuth.signOut();
-        // Google sign out
-        googleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Google Sign In failed, update UI appropriately
-                        Log.w(TAG, "Signed out of google");
-                    }
-                });
-        launchLoginActivity();
-
-    }
-    private void revokeAccess() {
-        // Firebase sign out
-        firebaseAuth.signOut();
-        // Google revoke access
-        googleSignInClient.revokeAccess().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Google Sign In failed, update UI appropriately
-                        Log.w(TAG, "Revoked Access");
-                    }
-                });
-        launchLoginActivity();
-    }
-
-    private void launchLoginActivity() {
-        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-        startActivity(intent);
-    }
+//
+//    private void revokeAccess() {
+//        // Firebase sign out
+//        firebaseAuth.signOut();
+//        // Google revoke access
+//        googleSignInClient.revokeAccess().addOnCompleteListener(this,
+//                new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        // Google Sign In failed, update UI appropriately
+//                        Log.w(TAG, "Revoked Access");
+//                    }
+//                });
+//        launchLoginActivity();
+//    }
 
     private void launchShayStoryActivity() {
         Intent intent = new Intent(getBaseContext(), ShayStory.class);
@@ -243,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void CallInbar() {
+        SMSInbar();
         String phoneNumber = "+972545789677";
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:"+phoneNumber));
@@ -319,12 +286,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             protected void onPostExecute(List<Event> items) {
                 if (!items.isEmpty()) {
-                    ProgressBar progressBar = findViewById(R.id.progressBar);
-                    TextView barTitle = findViewById(R.id.barTitle);
+//                    ProgressBar progressBar = findViewById(R.id.progressBar);
+//                    TextView barTitle = findViewById(R.id.barTitle);
                     System.out.println("Upcoming events");
                     if (items.size() == 0) {
-                        progressBar.setProgress(0);
-                        barTitle.setText("אין פגישות קרובות");
+//                        progressBar.setProgress(0);
+//                        barTitle.setText("אין פגישות קרובות");
                         return;
                     }
                     for (Event event : items) {
@@ -339,8 +306,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String events_data = event.getSummary();
                         long totalMeeting = end.getValue() - start.getValue();
                         System.out.println(totalMeeting);
-                        progressBar.setProgress(70);
-                        barTitle.setText(events_data);
+//                        progressBar.setProgress(70);
+//                        barTitle.setText(events_data);
                         System.out.print(events_data);
                     }
                 }

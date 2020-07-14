@@ -30,24 +30,21 @@ public class LoginActivity extends AppCompatActivity {
     GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
     private static final String ARG_NAME = "username";
-    boolean withoutSignIn = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        if (!withoutSignIn) {
-            SignInButton signInButton = findViewById(R.id.sign_in_button);
-            signInButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Launch Sign In
-                    signInToGoogle();
-                }
-            });
-            // Configure Google Client
-            configureGoogleClient();
-        }
+        SignInButton signInButton = findViewById(R.id.sign_in_button);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Launch Sign In
+                signInToGoogle();
+            }
+        });
+        // Configure Google Client
+        configureGoogleClient();
     }
 
     private void configureGoogleClient() {
@@ -70,18 +67,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        if (withoutSignIn) {
-            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-            intent.putExtra(ARG_NAME, "no_user");
-            startActivity(intent);
-        } else {
-            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            if (currentUser != null) {
-                Log.d(TAG, "Currently Signed in: " + currentUser.getEmail());
-                showToastMessage("Currently Logged in: " + currentUser.getEmail());
-                launchMainActivity(currentUser);
-            }
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            Log.d(TAG, "Currently Signed in: " + currentUser.getEmail());
+            showToastMessage("Currently Logged in: " + currentUser.getEmail());
+            launchMainActivity(currentUser);
         }
     }
 
