@@ -29,13 +29,18 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".ShayStory"
-            android:label="@string/title_activity_my_story"
+            android:name=".EditStoryActivity"
+            android:label="@string/title_activity_edit_my_story"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
             android:name=".SettingActivity"
             android:label="Setting"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ViewStoryActivity"
+            android:label="@string/title_activity_view_my_story"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity

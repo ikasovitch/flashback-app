@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/l1"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="60dp"
@@ -16,19 +15,56 @@
         android:gravity="center"
         android:orientation="vertical">
 
+
+        <LinearLayout
+            android:id="@+id/SettingsTitleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/light_milk"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/BackButtonSetting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@color/light_milk"
+                android:stateListAnimator="@null"
+                android:drawableStart="@drawable/back_icon"
+                />
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_height="32dp"
+                android:text="הגדרות"
+                android:textSize="20sp"
+                />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/buttonEditEmeNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ערוך מספרי חרום"
-            tools:layout_editor_absoluteX="79dp"
-            tools:layout_editor_absoluteY="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:text="ערוך מספרי חירום"
+            />
+
+        <Button
+            android:id="@+id/ButtonEditStory"
+            android:layout_width="match_parent"
+            android:layout_margin="5dp"
+            android:layout_height="match_parent"
+            android:text="ערוך את הסיפור של שי"
             />
 
         <Button
             android:id="@+id/buttonLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:text="התנתק"
             android:textAllCaps="false" />

@@ -55,10 +55,29 @@ public class SettingActivity extends AppCompatActivity {
             public void onClick(View view) { signOut();
             }
         });
+
+        findViewById(R.id.BackButtonSetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchMainActivity();
+            }
+        });
+
+        findViewById(R.id.ButtonEditStory).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchEditStoryActivity();
+            }
+        });
     }
 
     private void launchLoginActivity() {
         Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchMainActivity() {
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
         startActivity(intent);
     }
 
@@ -104,5 +123,10 @@ public class SettingActivity extends AppCompatActivity {
                 Log.w(TAG, "listener canceled", databaseError.toException());
             }
         });
+    }
+
+    private void launchEditStoryActivity() {
+        Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
+        startActivity(intent);
     }
 }
