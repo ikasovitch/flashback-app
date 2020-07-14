@@ -36,8 +36,14 @@ public class SettingActivity extends AppCompatActivity {
                 GetEmergencyNumbers();
             }
         });
-    }
 
+        findViewById(R.id.ButtonEditStory).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchEditStoryActivity();
+            }
+        });
+    }
 
     private void GetEmergencyNumbers() {
         DatabaseReference primary = mDatabase.child("sos_numbers");
@@ -66,5 +72,10 @@ public class SettingActivity extends AppCompatActivity {
                 Log.w(TAG, "listener canceled", databaseError.toException());
             }
         });
+    }
+
+    private void launchEditStoryActivity() {
+        Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
+        startActivity(intent);
     }
 }

@@ -2,10 +2,8 @@ package com.flashbackapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -27,7 +25,6 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,7 +46,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -228,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void launchShayStoryActivity() {
-        Intent intent = new Intent(getBaseContext(), ShayStory.class);
+        Intent intent = new Intent(getBaseContext(), ViewStoryActivity.class);
         startActivity(intent);
     }
 

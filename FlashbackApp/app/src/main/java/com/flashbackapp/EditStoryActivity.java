@@ -16,7 +16,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-public class ShayStory extends AppCompatActivity {
+public class EditStoryActivity extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private static final String ARG_NAME = "username";
     FirebaseAuth firebaseAuth;
@@ -24,9 +24,9 @@ public class ShayStory extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shay_story);
+        setContentView(R.layout.activity_edit_story);
 
-        findViewById(R.id.ReturnToMainFromStory).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.ReturnToMainFromEditStory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
