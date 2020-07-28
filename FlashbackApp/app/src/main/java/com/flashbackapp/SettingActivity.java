@@ -1,10 +1,6 @@
 package com.flashbackapp;
 
-import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class SettingActivity extends AppCompatActivity {
@@ -67,6 +61,14 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 launchEditStoryActivity();
+            }
+        });
+
+        findViewById(R.id.buttonAddAddress).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newAddressIntent = new Intent(v.getContext(), AddAddressActivity.class);
+                startActivity(newAddressIntent);
             }
         });
     }

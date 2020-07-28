@@ -81,4 +81,15 @@
 
     <string name="good_morning_shay">בוקר טוב שי</string>
 
+    <string name="enter_address_title">הכנס כתובת חדשה</string>
+    <string name="city_name_hint">הכנס את שם העיר</string>
+    <string name="street_name_hint">הכנס את שם הרחוב</string>
+    <string name="create_address_text">צור כתובת חדשה</string>
+    <string name="address_hint">עיר, רחוב ,מספר בית</string>
+    <string name="enter_longitude_hint">קו אורך ג׳י פי אס</string>
+    <string name="enter_latitude_hint">קו רוחב פי אס</string>
+    <string name="enter_address_name">תן שם לכתובת</string>
+    <string name="address_already_exists">כתובת כבר קיימת</string>
+    <string name="address_create_successfully">כתובת נוצרה בהצלחה!</string>
+    <string name="invalid_address">כתובת לא חוקית</string>
 </resources>
