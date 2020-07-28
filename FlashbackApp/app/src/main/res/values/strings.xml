@@ -87,7 +87,7 @@
     <string name="create_address_text">צור כתובת חדשה</string>
     <string name="address_hint">עיר, רחוב ,מספר בית</string>
     <string name="enter_longitude_hint">קו אורך ג׳י פי אס</string>
-    <string name="enter_latitude_hint">קו רוחב פי אס</string>
+    <string name="enter_latitude_hint">קו רוחב ג׳י פי אס</string>
     <string name="enter_address_name">תן שם לכתובת</string>
     <string name="address_already_exists">כתובת כבר קיימת</string>
     <string name="address_create_successfully">כתובת נוצרה בהצלחה!</string>
