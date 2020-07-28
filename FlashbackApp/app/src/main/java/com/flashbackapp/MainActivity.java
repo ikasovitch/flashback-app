@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //
@@ -91,14 +92,9 @@ public class MainActivity extends AppCompatActivity {
         assert acct != null;
         credential.setSelectedAccountName(acct.getEmail());
         firebaseAuth = FirebaseAuth.getInstance();
-
-        try {
-            getEventFromGoogleCalendar();
-        } catch (IOException | GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-
         setTitle();
+
+        new CalenderWorker().execute();
 
         findViewById(R.id.buttonShayStory).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +129,23 @@ public class MainActivity extends AppCompatActivity {
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
+
+    private void PracticeTime() {
+        // This will be the practice app
+        String packageName = "com.google.android.apps.maps";
+        Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
+        if(intent != null) {
+            startActivity(intent);
+        }
+    }
+
+    private void CalenderTime() {
+        String packageName = "com.google.android.calendar";
+        Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
+        if(intent != null) {
+            startActivity(intent);
+        }
     }
 
     private void setTitle() {
@@ -253,9 +266,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getEventFromGoogleCalendar() throws IOException, GeneralSecurityException {
-        // List the next 10 events from the primary calendar.
-        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, List<Event>> task = new AsyncTask<Void, Void, List<Event>>() {
+    private class CalenderWorker extends AsyncTask<Void, Void, List<Event>> {
+        // List the next 1 events from the primary calendar.
             @Override
             protected List<Event> doInBackground(Void... params) {
                 final NetHttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -266,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                 List<Event> items = null;
                 try {
                     Events events = service.events().list("primary")
-                            .setMaxResults(10)
+                            .setMaxResults(1)
                             .setTimeMin(now)
                             .setOrderBy("startTime")
                             .setSingleEvents(true)
@@ -282,35 +294,45 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(List<Event> items) {
+                Button meetingsManager = findViewById(R.id.MeetingsManager);
+                boolean is_practice_time = false;
                 if (!items.isEmpty()) {
-//                    ProgressBar progressBar = findViewById(R.id.progressBar);
-//                    TextView barTitle = findViewById(R.id.barTitle);
-                    System.out.println("Upcoming events");
-                    if (items.size() == 0) {
-//                        progressBar.setProgress(0);
-//                        barTitle.setText("אין פגישות קרובות");
-                        return;
-                    }
-                    for (Event event : items) {
-                        DateTime start = event.getStart().getDateTime();
-                        DateTime end = event.getEnd().getDateTime();
-                        if (start == null) {
-                            start = event.getStart().getDate();
-                        }
-                        if (end == null) {
-                            end = event.getEnd().getDate();
-                        }
-                        String events_data = event.getSummary();
-                        long totalMeeting = end.getValue() - start.getValue();
-                        System.out.println(totalMeeting);
-//                        progressBar.setProgress(70);
-//                        barTitle.setText(events_data);
-                        System.out.print(events_data);
+                    Event event = items.get(0);
+                    long start = event.getStart().getDateTime().getValue();
+                    long end = event.getEnd().getDateTime().getValue();
+                    long now = new DateTime(System.currentTimeMillis()).getValue();
+                    String events_data = event.getSummary();
+
+                    System.out.print(events_data);
+                    if (now > start && now < end) {
+                        long totalTimeMinutes = (end - now) / 60000;
+                        String meetingText = "נותרו עוד " +  totalTimeMinutes + " דקות לפגישת " + events_data;
+                        meetingsManager.setText(meetingText);
+                    } else if(now < start && ((start - now) / 60000) < 60) {
+                        long totalTimeMinutes = (start - now) / 60000;
+                        String meetingText = "בעוד " + totalTimeMinutes +  " פגישת דקות " + events_data;
+                        meetingsManager.setText(meetingText);
+                    } else {
+                        is_practice_time = true;
                     }
                 }
-            }
-        };
-        task.execute();
-    }
 
+                if (is_practice_time) {
+                    meetingsManager.setText("זמן טוב להתאמן");
+                    findViewById(R.id.MeetingsManager).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            PracticeTime();
+                        }
+                    });
+                } else {
+                    findViewById(R.id.MeetingsManager).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            CalenderTime();
+                        }
+                    });
+                }
+            }
+        }
 }
