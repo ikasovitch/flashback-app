@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,8 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -50,13 +47,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -91,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private Location currentLocation;
     private String closestLocation;
+    private String practiceApp;
     private DatabaseReference locationsDatabase;
 
     @Override
@@ -119,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         setTitle();
 
         Location();
-        setRepeatingCalenderTask();
 
         findViewById(R.id.buttonShayStory).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,6 +142,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        GetPracticeAppName();
+        setRepeatingCalenderTask();
     }
 
     // Location methods
@@ -257,10 +254,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private void PracticeTime() {
         // This will be the practice app
-        String packageName = "com.google.android.apps.maps";
-        Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
-        if(intent != null) {
-            startActivity(intent);
+        if (!practiceApp.isEmpty()) {
+            Intent intent = getPackageManager().getLaunchIntentForPackage(practiceApp);
+            if (intent != null) {
+                startActivity(intent);
+            }
         }
     }
 
@@ -280,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if (currentHour > 12 && currentHour < 18) {
             titleTextString = "צהריים טובים שי!";
             color = Color.rgb(146, 210, 132);
-        } else if (currentHour > 18 || currentHour < 6) {
+        } else if (currentHour > 17 || currentHour < 6) {
             titleTextString = "ערב טוב שי!";
             color = Color.rgb(112, 106, 200);
         }
@@ -359,17 +357,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
 
-    private void CallEmergencyNumber() {   DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
+    private void CallEmergencyNumber() {
+        DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
         primary.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     String name = childSnapshot.getKey();
                     String phone_number = Objects.requireNonNull(childSnapshot.child("number").getValue()).toString();
                     String image = Objects.requireNonNull(childSnapshot.child("picture").getValue()).toString();
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:"+phone_number));
-                    if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+                    callIntent.setData(Uri.parse("tel:" + phone_number));
+                    if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         return;
                     }
                     startActivity(callIntent);
@@ -385,6 +384,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
+    private void GetPracticeAppName() {
+        DatabaseReference practice_app = mDatabase.child("practice_app");
+        practice_app.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                practiceApp = Objects.requireNonNull(dataSnapshot.getValue()).toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "listener canceled", databaseError.toException());
+            }
+        });
+    }
 
     private void setRepeatingCalenderTask() {
         final Handler handler = new Handler();
@@ -456,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         is_practice_time = false;
                     } else if(now < start && ((start - now) / 60000) < 60) {
                         long totalTimeMinutes = (start - now) / 60000;
-                        String meetingText = "בעוד " + totalTimeMinutes +  " פגישת דקות " + events_data;
+                        String meetingText = "בעוד " + totalTimeMinutes +  " דקות " + events_data;
                         meetingsManager.setText(meetingText);
                         is_practice_time = false;
                     }

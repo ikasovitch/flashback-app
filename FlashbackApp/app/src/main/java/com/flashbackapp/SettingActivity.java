@@ -71,6 +71,13 @@ public class SettingActivity extends AppCompatActivity {
                 startActivity(newAddressIntent);
             }
         });
+
+        findViewById(R.id.buttonEditPracticeApp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchEditPracticeApp();
+            }
+        });
     }
 
     private void launchLoginActivity() {
@@ -128,6 +135,11 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void launchEditStoryActivity() {
+        Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchEditPracticeApp() {
         Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
         startActivity(intent);
     }

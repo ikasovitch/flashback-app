@@ -63,10 +63,18 @@
 
         <Button
             android:id="@+id/buttonAddAddress"
-            android:layout_width="232dp"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_margin="5dp"
+            android:layout_height="match_parent"
             android:text="הוסף כתובת"
+            />
+
+        <Button
+            android:id="@+id/buttonEditPracticeApp"
+            android:layout_width="match_parent"
+            android:layout_margin="5dp"
+            android:layout_height="match_parent"
+            android:text="ערוך אפליקצית אימון"
             />
 
         <Button
