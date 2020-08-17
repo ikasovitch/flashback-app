@@ -448,7 +448,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     System.out.print(events_data);
                     if (now > start && now < end) {
                         long totalTimeMinutes = (end - now) / 60000;
-                        String meetingText = "נותרו עוד " +  totalTimeMinutes + " דקות לפגישת " + events_data;
+                        String meetingText = "נותר יותר משעה ל" + events_data;
+                        if (totalTimeMinutes < 60) {
+                            meetingText = "נותרו עוד " + totalTimeMinutes + " דקות ל" + events_data;
+                        }
                         meetingsManager.setText(meetingText);
                         is_practice_time = false;
                     } else if(now < start && ((start - now) / 60000) < 60) {
