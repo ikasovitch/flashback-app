@@ -60,15 +60,16 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "MainActivity";
     private static final String ARG_NAME = "username";
-    final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     private DatabaseReference mDatabase;
     GoogleAccountCredential credential;
     private static final int REQUEST_AUTHORIZATION = 2;
+    private static final int CALL_SMS_PERMISSION_REQUESTS=3;
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
     FirebaseAuth firebaseAuth;
@@ -105,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //            }
 //        });
 
+        // Request permissions for emergency call and SMS
+        checkPhoneCallAndSmsPermissions();
+
         // Google Accounts
         credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(CalendarScopes.CALENDAR));
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
@@ -125,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         findViewById(R.id.ButtonEmergencyNumber).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CallInbar();
+                CallEmergencyNumber();
+                SMSEmergencyNumbers();
             }
         });
 
@@ -291,6 +296,37 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //        titleText.setTypeface(null, Typeface.BOLD);
     }
 
+
+    // Function to convert ArrayList<String> to String[]
+    public static String[] GetStringArray(ArrayList<String> arr)
+    {
+
+        // declaration and initialise String Array
+        String str[] = new String[arr.size()];
+
+        // Convert ArrayList to object array
+        Object[] objArr = arr.toArray();
+
+        // Iterating and converting to String
+        int i = 0;
+        for (Object obj : objArr) {
+            str[i++] = (String)obj;
+        }
+
+        return str;
+    }
+    private void checkPhoneCallAndSmsPermissions(){
+        ArrayList<String> permissions = new ArrayList<String>();
+        if (!hasPermission(Manifest.permission.CALL_PHONE)) {
+            permissions.add(Manifest.permission.CALL_PHONE);
+        }
+        if (!hasPermission(Manifest.permission.SEND_SMS)) {
+            permissions.add(Manifest.permission.SEND_SMS);
+        }
+        requestPermissions(GetStringArray(permissions), CALL_SMS_PERMISSION_REQUESTS);
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -338,28 +374,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         startActivity(intent);
     }
 
-    private void CallInbar() {
-        SMSInbar();
-        String phoneNumber = "+972545789677";
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:"+phoneNumber));
-        if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        startActivity(callIntent);
-    }
-
-    private void SMSInbar() {
-        String phoneNumber = "+972545789677";
-        String content = "Hi!";
-        if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(phoneNumber, null, content, null, null);
-        Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
-    }
-
     private void CallEmergencyNumber() {
         DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
         primary.addValueEventListener(new ValueEventListener() {
@@ -385,6 +399,55 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
 
+    }
+
+
+    private void SMSEmergencyNumbers() {
+        final String content = "This SMS was sent from Flashback App!";
+        DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
+        DatabaseReference others = mDatabase.child("sos_numbers").child("others");
+
+        // send SMS to primary
+        primary.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    String phoneNumber = Objects.requireNonNull(childSnapshot.child("number").getValue()).toString();
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(phoneNumber, null, content, null, null);
+                    // ...
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "listener canceled", databaseError.toException());
+            }
+        });
+
+        // send SMS to others
+        others.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    String phoneNumber = Objects.requireNonNull(childSnapshot.child("number").getValue()).toString();
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(phoneNumber, null, content, null, null);
+                    // ...
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "listener canceled", databaseError.toException());
+            }
+        });
     }
 
     private void GetPracticeAppName() {
