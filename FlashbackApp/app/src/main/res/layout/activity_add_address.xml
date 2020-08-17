@@ -39,38 +39,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addressNameText" />
 
-    <EditText
-        android:id="@+id/longitudeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="@string/enter_longitude_hint"
-        android:inputType="numberDecimal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postalAddressText"
-        android:autofillHints="" />
-
     <Button
         android:id="@+id/btnNewAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/create_address_text"
-        app:layout_constraintStart_toStartOf="@+id/longitudeText"
-        app:layout_constraintTop_toBottomOf="@id/latitudeText" />
+        app:layout_constraintStart_toStartOf="@+id/addressNameText"
+        app:layout_constraintTop_toBottomOf="@id/postalAddressText" />
 
-    <EditText
-        android:id="@+id/latitudeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="@string/enter_latitude_hint"
-        android:inputType="numberDecimal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/longitudeText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

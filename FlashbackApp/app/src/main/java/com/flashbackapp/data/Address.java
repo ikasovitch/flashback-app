@@ -19,7 +19,7 @@ public class Address {
         this.cityName = parts[0];
         this.streetName = parts[1];
         try {
-            this.houseNumber = Integer.parseInt(parts[2]);
+            this.houseNumber = Integer.parseInt(parts[2].replaceAll(" ",""));
         } catch (NumberFormatException nfe) {
             throw new IllegalArgumentException(String.format("Invalid house number: %s", parts[2]));
         }
