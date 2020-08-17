@@ -36,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import android.os.Handler;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -94,8 +97,7 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         setTitle();
 
-        new CalenderWorker().execute();
-
+        setRepeatingCalenderTask();
         findViewById(R.id.buttonShayStory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -266,6 +268,29 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private void setRepeatingCalenderTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            CalenderWorker calenderTask = new CalenderWorker();
+                            calenderTask.execute();
+                        } catch (Exception e) {
+                            // error, do something
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 0, 60*1000);  // interval of one minute
+    }
+
     private class CalenderWorker extends AsyncTask<Void, Void, List<Event>> {
         // List the next 1 events from the primary calendar.
             @Override
@@ -295,8 +320,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(List<Event> items) {
                 Button meetingsManager = findViewById(R.id.MeetingsManager);
-                boolean is_practice_time = false;
-                if (!items.isEmpty()) {
+                boolean is_practice_time = true;
+                if (items != null && !items.isEmpty()) {
                     Event event = items.get(0);
                     long start = event.getStart().getDateTime().getValue();
                     long end = event.getEnd().getDateTime().getValue();
@@ -308,12 +333,12 @@ public class MainActivity extends AppCompatActivity {
                         long totalTimeMinutes = (end - now) / 60000;
                         String meetingText = "נותרו עוד " +  totalTimeMinutes + " דקות לפגישת " + events_data;
                         meetingsManager.setText(meetingText);
+                        is_practice_time = false;
                     } else if(now < start && ((start - now) / 60000) < 60) {
                         long totalTimeMinutes = (start - now) / 60000;
                         String meetingText = "בעוד " + totalTimeMinutes +  " פגישת דקות " + events_data;
                         meetingsManager.setText(meetingText);
-                    } else {
-                        is_practice_time = true;
+                        is_practice_time = false;
                     }
                 }
 
