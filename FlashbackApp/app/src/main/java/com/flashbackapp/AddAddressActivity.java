@@ -1,6 +1,10 @@
 package com.flashbackapp;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.List;
+
 public class AddAddressActivity extends AppCompatActivity {
 
     @Override
@@ -30,21 +37,23 @@ public class AddAddressActivity extends AppCompatActivity {
             public void onClick(final View view) {
                 EditText addressNameEditText = findViewById(R.id.addressNameText);
                 EditText postalAddressEditText = findViewById(R.id.postalAddressText);
-                EditText longitudeEditText = findViewById(R.id.longitudeText);
-                EditText latitudeEditText = findViewById(R.id.latitudeText);
 
                 final String addressName = addressNameEditText.getText().toString();
                 final String postalAddress = postalAddressEditText.getText().toString();
-                final float longitude = Float.parseFloat(longitudeEditText.getText().toString());
-                final float latitude = Float.parseFloat(latitudeEditText.getText().toString());
-
+                final Location location;
+                try {
+                    location = getLocationFromAddress(postalAddress);
+                } catch (IOException e) {
+                    showToast(R.string.invalid_address);
+                    return;
+                }
                 final DatabaseReference databaseReference = AddressModel.getByKey(addressName);
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) {
                             try {
-                                AddressModel.create(dataSnapshot, postalAddress, longitude, latitude);
+                                AddressModel.create(dataSnapshot, postalAddress, (float)location.getLongitude(), (float)location.getLatitude());
                                 showToast(R.string.address_create_successfully);
                                 Intent intent = new Intent(getBaseContext(), SettingActivity.class);
                                 startActivity(intent);
@@ -70,5 +79,21 @@ public class AddAddressActivity extends AppCompatActivity {
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(getApplicationContext(), resourceId, duration);
         toast.show();
+    }
+
+    public Location getLocationFromAddress(String strAddress) throws IOException {
+        Geocoder coder = new Geocoder(this);
+        List<Address> addresses;
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+
+        addresses = coder.getFromLocationName(strAddress,1);
+        if (addresses==null) {
+            showToast(R.string.invalid_address);
+            return location;
+        }
+        Address address = addresses.get(0);
+        location.setLatitude(address.getLatitude());
+        location.setLongitude(address.getLongitude());
+        return location;
     }
 }

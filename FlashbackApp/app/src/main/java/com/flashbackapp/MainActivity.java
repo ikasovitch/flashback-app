@@ -233,6 +233,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private String getAddress(Location location) throws IOException {
         Geocoder geocoder = new Geocoder(this, Locale.forLanguageTag("he"));
         List<Address> addresses  = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(), 1);
+        if(addresses.size() == 0){
+            return "...";
+        }
         String address = addresses.get(0).getAddressLine(0);
         return address;
     }
