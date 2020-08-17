@@ -2,10 +2,16 @@ package com.flashbackapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -54,13 +60,15 @@ import java.security.GeneralSecurityException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "MainActivity";
     private static final String ARG_NAME = "username";
     final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
@@ -71,6 +79,19 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth;
     GoogleSignInClient googleSignInClient;
+
+    // Locations properties
+    protected LocationManager locationManager;
+
+    private static final String[] LOCATION_PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
+    private static final int INITIAL_REQUEST=1337;
+    private static final int METERS_THRESHOLD = 500;
+
+    private Location currentLocation;
+    private String closestLocation;
+    private DatabaseReference locationsDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         setTitle();
 
+        Location();
         setRepeatingCalenderTask();
+
         findViewById(R.id.buttonShayStory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,15 +145,114 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.ButtonLocations).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchShayLocationsActivity();
-            }
-        });
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
+
+    // Location methods
+    @SuppressLint("MissingPermission")
+    private void Location() {
+        locationsDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://shai-mfh-3586.firebaseio.com");
+
+        if (!canAccessLocation()) {
+            requestPermissions(LOCATION_PERMISSIONS, INITIAL_REQUEST);
+        }
+
+        currentLocation = new Location ("currentLocation");
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+
+        updateClosestLocation();
+        printClosetsLocation();
+    }
+
+    private boolean canAccessLocation() {
+        return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+    }
+
+    private boolean hasPermission(String perm) {
+        return(PackageManager.PERMISSION_GRANTED==checkSelfPermission(perm));
+    }
+
+    private void updateClosestLocation() {
+        DatabaseReference addressesRef = locationsDatabase.child("known_address");
+        addressesRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        updateClosestLocation((Map<String, Object>) dataSnapshot.getValue());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.w(TAG, "listener canceled", databaseError.toException());
+                    }
+                }
+        );
+        System.out.println(closestLocation);
+    }
+
+    public void printClosetsLocation() {
+        TextView txtLat = findViewById(R.id.ButtonLocations);
+        if (closestLocation != null) {
+            txtLat.setText("אני נמצא ב" + closestLocation);
+        }
+    }
+
+    public void onLocationChanged(Location location) {
+        currentLocation.setLatitude(location.getLatitude());
+        currentLocation.setLongitude(location.getLongitude());
+        updateClosestLocation();
+        printClosetsLocation();
+    }
+
+    private void updateClosestLocation(Map<String, Object> addresses) {
+        double minimalDistance = 0;
+        String minimalLocation = null;
+        for (Map.Entry<String, Object> entry: addresses.entrySet()) {
+            Map singleAddress = (Map) entry.getValue();
+            Location addressLocation = new Location("addressLocation");
+            addressLocation.setLatitude(new Double(singleAddress.get("latitude").toString()));
+            addressLocation.setLongitude(new Double(singleAddress.get("longitude").toString()));
+            double distance = addressLocation.distanceTo(currentLocation);
+            if (minimalLocation == null || distance < minimalDistance) {
+                minimalLocation = entry.getKey();
+                minimalDistance = distance;
+            }
+        }
+        if (minimalDistance < METERS_THRESHOLD) {
+            closestLocation = minimalLocation;
+        } else {
+            try {
+                closestLocation = getAddress(currentLocation);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String getAddress(Location location) throws IOException {
+        Geocoder geocoder = new Geocoder(this, Locale.forLanguageTag("he"));
+        List<Address> addresses  = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(), 1);
+        String address = addresses.get(0).getAddressLine(0);
+        return address;
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Log.d("Latitude","disable");
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.d("Latitude","enable");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.d("Latitude","status");
     }
 
     private void PracticeTime() {
@@ -212,11 +334,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchShaySettingActivity() {
         Intent intent = new Intent(getBaseContext(), SettingActivity.class);
-        startActivity(intent);
-    }
-
-    private void launchShayLocationsActivity() {
-        Intent intent = new Intent(getBaseContext(), LocationsActivity.class);
         startActivity(intent);
     }
 

@@ -45,11 +45,5 @@
             android:label="@string/title_activity_view_my_story"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity
-            android:name=".LocationsActivity"
-            android:label="Locations"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
     </application>
 </manifest>
