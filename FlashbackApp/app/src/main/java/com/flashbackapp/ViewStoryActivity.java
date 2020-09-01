@@ -2,6 +2,7 @@ package com.flashbackapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ public class ViewStoryActivity extends AppCompatActivity {
         TextView shai_story = findViewById(R.id.StoryText);
         shai_story.setText(story);
         shai_story.setVisibility(View.VISIBLE);
+        shai_story.setMovementMethod(new ScrollingMovementMethod());
         System.out.print(story);
     }
 
