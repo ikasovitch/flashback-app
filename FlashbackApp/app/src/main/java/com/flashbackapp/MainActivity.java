@@ -117,7 +117,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         firebaseAuth = FirebaseAuth.getInstance();
         setTitle();
 
-        Location();
+        if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)){
+            Location();
+        }
 
         findViewById(R.id.buttonShayStory).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -323,7 +325,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if (!hasPermission(Manifest.permission.SEND_SMS)) {
             permissions.add(Manifest.permission.SEND_SMS);
         }
-        requestPermissions(GetStringArray(permissions), CALL_SMS_PERMISSION_REQUESTS);
+        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (permissions.size()>0) {
+            requestPermissions(GetStringArray(permissions), CALL_SMS_PERMISSION_REQUESTS);
+        }
     }
 
 
