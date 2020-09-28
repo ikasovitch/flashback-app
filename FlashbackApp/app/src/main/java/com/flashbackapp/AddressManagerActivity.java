@@ -105,10 +105,11 @@ public class AddressManagerActivity extends AppCompatActivity {
                 System.out.println("Deleting");
                 AddressObject address_object = (AddressObject) listView.getItemAtPosition(i);
                 String address = address_object.getAddress();
-                System.out.println(address_object.toString());
+                DatabaseReference mPostReference;
+                mPostReference = mDatabase.child("known_address").child(address);
+                mPostReference.removeValue();
             }
         }
-        // TODO: Delete from db
     }
 
     private void GetAddress() {
@@ -116,6 +117,7 @@ public class AddressManagerActivity extends AppCompatActivity {
         known_address.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                address.clear();
                 for (DataSnapshot primaryChildSnapshot : dataSnapshot.getChildren()) {
                     String known_address = primaryChildSnapshot.getKey();
                     AddressObject known_address_obj = new AddressObject(known_address);
