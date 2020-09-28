@@ -69,6 +69,14 @@ public class PhoneNumberActivity extends AppCompatActivity {
                 DeleteSelectedIteams();
             }
         });
+
+        findViewById(R.id.addNumber).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onButtonAddNumberWindowClick(v);
+            }
+        });
+
         GetEmergencyNumbers();
     }
 
