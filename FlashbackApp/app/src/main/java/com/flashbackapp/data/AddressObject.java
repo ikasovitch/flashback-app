@@ -1,4 +1,4 @@
-package com.flashbackapp;
+package com.flashbackapp.data;
 
 import java.io.Serializable;
 
