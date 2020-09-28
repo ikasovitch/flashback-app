@@ -103,21 +103,30 @@ public class WidgetProvider extends AppWidgetProvider {
             // Create some random data
             int number = (new Random().nextInt(100));
 
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                    R.layout.app_widget);
+            // Create an Intent to launch LoginActivity
+            Intent intent = new Intent(context, LoginActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+            // Get the layout for the App Widget and attach an on-click listener
+            // to the button
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+            views.setOnClickPendingIntent(R.id.layout, pendingIntent);
+
+//            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+//                    R.layout.app_widget);
             // Set the text
 //            remoteViews.setTextViewText(R.id.update, String.valueOf(number));
 
             // Register an onClickListener
-            Intent intent = new Intent(context, WidgetProvider.class);
-
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//            remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
-            appWidgetManager.updateAppWidget(widgetId, remoteViews);
+//            Intent intent = new Intent(context, WidgetProvider.class);
+//
+//            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+//            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+//
+//            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+//                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+////            remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
+//            appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }
 }
