@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@color/light_milk"
+    >
+
+    <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/light_yellow"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_margin="5dp"
+            android:layout_height="35dp"
+            android:textStyle="bold"
+            android:textColor="@color/blue_grey_900"
+            android:text="אל תשאיר פרטים אישיים!"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mainButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/MeetingsManager"
+        android:layout_width="125dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:background="@color/light_green"
+        android:paddingStart="17dp"
+        android:textSize="17sp"
+        android:paddingEnd="10dp"
+        android:drawableEnd="@drawable/hourglass"
+        android:text="זמן טוב להתאמן"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/ButtonEmergencyNumber"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:layout_margin="5dp"
+        android:textSize="17sp"
+        android:background="@color/light_red"
+        android:drawableStart="@drawable/ringing_phone"
+        android:paddingEnd="10dp"
+        android:text="שיחת חירום"
+        android:textAllCaps="false" />
+    </LinearLayout>
+</LinearLayout>

@@ -12,4 +12,5 @@
 
     <!-- For google authentication-->
     <dimen name="g_top_margin">100dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
 </resources>
