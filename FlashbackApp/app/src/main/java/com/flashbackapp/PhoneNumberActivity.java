@@ -33,6 +33,7 @@ public class PhoneNumberActivity extends AppCompatActivity {
     private static final String TAG = "PhoneNumberActivity";
     private List<PhoneNumber> phone_number_by_name = new ArrayList<>();
     private ListView listView;
+    ArrayAdapter<PhoneNumber> arrayAdapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +78,6 @@ public class PhoneNumberActivity extends AppCompatActivity {
                 onButtonAddNumberWindowClick(v);
             }
         });
-
         GetEmergencyNumbers();
     }
 
@@ -87,9 +87,7 @@ public class PhoneNumberActivity extends AppCompatActivity {
     }
 
     private void initListViewData()  {
-        ArrayAdapter<PhoneNumber> arrayAdapter
-                = new ArrayAdapter<>(this, android.R.layout.simple_list_item_checked, phone_number_by_name);
-
+        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_checked, phone_number_by_name);
         this.listView.setAdapter(arrayAdapter);
 
         for(int i=0;i< phone_number_by_name.size(); i++ )  {
@@ -106,9 +104,16 @@ public class PhoneNumberActivity extends AppCompatActivity {
                 PhoneNumber name_phone_number = (PhoneNumber) listView.getItemAtPosition(i);
                 String name = name_phone_number.getName();
                 System.out.println(name_phone_number.toString());
+                DatabaseReference mPostReference;
+                if (name_phone_number.isPrimary()) {
+                    mPostReference = mDatabase.child("sos_numbers").child("primary").child(name);
+                }
+                else {
+                    mPostReference = mDatabase.child("sos_numbers").child("others").child(name);
+                }
+                mPostReference.removeValue();
             }
         }
-       // TODO: Delete from db
     }
 
 
@@ -117,6 +122,7 @@ public class PhoneNumberActivity extends AppCompatActivity {
         primary.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                phone_number_by_name.clear();
                 DataSnapshot primary = dataSnapshot.child("primary");
                 DataSnapshot others = dataSnapshot.child("others");
                 for (DataSnapshot primaryChildSnapshot : primary.getChildren()) {

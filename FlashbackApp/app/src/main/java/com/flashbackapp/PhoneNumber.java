@@ -23,6 +23,9 @@ class PhoneNumber implements Serializable {
         return this.number;
     }
 
+    public boolean isPrimary() {
+        return this.is_primary;
+    }
     public boolean isActive() {
         return active;
     }
