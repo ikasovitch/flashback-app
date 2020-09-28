@@ -29,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
-import java.util.Objects;
 
 public class SettingActivity extends AppCompatActivity {
     private static final String TAG = "SettingActivity";
@@ -84,7 +83,8 @@ public class SettingActivity extends AppCompatActivity {
         findViewById(R.id.buttonEditPracticeApp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onButtonSaveAppWindowClick(v);
+                Intent newAddressIntent = new Intent(v.getContext(), ApplicationManager.class);
+                startActivity(newAddressIntent);
             }
         });
     }
@@ -120,69 +120,9 @@ public class SettingActivity extends AppCompatActivity {
     }
 
 
-
     private void launchEditStoryActivity() {
         Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
         startActivity(intent);
-    }
-
-    public void onButtonSaveAppWindowClick(View view) {
-
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
-        final View popupView = inflater.inflate(R.layout.practice_app, null);
-
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // dismiss the popup window when touched
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                popupWindow.dismiss();
-                return true;
-            }
-        });
-        if (!practice_app.isEmpty()) {
-            EditText practice_app_text = popupView.findViewById(R.id.practice_app);
-            practice_app_text.setText(practice_app);
-        }
-        Button btnNewAddPhoneNumber = popupView.findViewById(R.id.EditApp);
-        btnNewAddPhoneNumber.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                EditText appEditText = popupView.findViewById(R.id.practice_app);
-                final String addressName = appEditText.getText().toString();
-                if (!isPackageExisted(addressName)) {
-                    showToast(R.string.invalid_app);
-                    return;
-                }
-                mDatabase.child("practice_app").setValue(addressName);
-                popupWindow.dismiss();
-            }
-        });
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-    }
-
-    public boolean isPackageExisted(String targetPackage){
-        List<ApplicationInfo> packages;
-        PackageManager pm;
-
-        pm = getPackageManager();
-        packages = pm.getInstalledApplications(0);
-        for (ApplicationInfo packageInfo : packages) {
-            if(packageInfo.packageName.equals(targetPackage))
-                return true;
-        }
-        return false;
     }
 
     private void showToast(int resourceId) {

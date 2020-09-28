@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#62def8">
+
+    <LinearLayout
+        android:id="@+id/l1"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/light_blue"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <EditText
+            android:id="@+id/appName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:cursorVisible="true"
+            android:ems="10"
+            android:hint="שם"
+            android:inputType="textPostalAddress"
+            android:singleLine="false"
+            android:textDirection="anyRtl"
+            />
+
+        <EditText
+            android:id="@+id/appAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="אפליקציה"
+            android:textDirection="anyRtl"
+            />
+
+        <Button
+            android:id="@+id/addANewApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="הוסף"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

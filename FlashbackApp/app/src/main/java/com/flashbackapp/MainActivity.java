@@ -138,13 +138,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        GetPracticeAppName();
         setRepeatingCalenderTask();
 
         String method = getIntent().getStringExtra("method_name");
-        System.out.println("Fff1");
         if (method != null && method.equals("emergency_call")) {
-            System.out.println("Fff");
             CallEmergencyNumber();
             SMSEmergencyNumbers();
         }
@@ -260,13 +257,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void PracticeTime() {
-        // This will be the practice app
-        if (!practiceApp.isEmpty()) {
-            Intent intent = getPackageManager().getLaunchIntentForPackage(practiceApp);
-            if (intent != null) {
-                startActivity(intent);
-            }
-        }
+        Intent intent = new Intent(getBaseContext(), AppsActivity.class);
+        startActivity(intent);
     }
 
     private void CalenderTime() {
@@ -292,7 +284,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         titleText.setTextColor(color);
         titleText.setText(titleTextString);
-//        titleText.setTypeface(null, Typeface.BOLD);
     }
 
 
@@ -445,21 +436,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     smsManager.sendTextMessage(phoneNumber, null, content, null, null);
                     // ...
                 }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "listener canceled", databaseError.toException());
-            }
-        });
-    }
-
-    private void GetPracticeAppName() {
-        DatabaseReference practice_app = mDatabase.child("practice_app");
-        practice_app.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                practiceApp = Objects.requireNonNull(dataSnapshot.getValue()).toString();
             }
 
             @Override

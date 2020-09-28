@@ -37,6 +37,18 @@
 
         </activity>
         <activity
+            android:name=".AppsActivity"
+            android:label="Apps"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".ApplicationManager"
+            android:label="AppSettings"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
             android:name=".SettingActivity"
             android:label="Setting"
             android:theme="@style/AppTheme.NoActionBar">

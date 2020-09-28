@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/light_milk"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/upLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/ReturnToMainFromEditStory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/light_milk"
+            android:stateListAnimator="@null"
+            android:drawableStart="@drawable/back_icon"
+            />
+
+        <Button
+            android:id="@+id/addAppAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="הוסף אפליקציה חדשה"
+            />
+
+        <Button
+            android:id="@+id/deleteNumbers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="מחק"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/downLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ListView
+            android:id="@+id/listApplication"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="ערוך מספרי חירום" />
+    </LinearLayout>
+
+</LinearLayout>
