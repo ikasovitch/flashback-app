@@ -94,18 +94,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         // Request permissions for emergency call and SMS
         checkPhoneCallAndSmsPermissions();
 
@@ -152,6 +140,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         GetPracticeAppName();
         setRepeatingCalenderTask();
+
+        String method = getIntent().getStringExtra("method_name");
+        System.out.println("Fff1");
+        if (method != null && method.equals("emergency_call")) {
+            System.out.println("Fff");
+            CallEmergencyNumber();
+            SMSEmergencyNumbers();
+        }
+
     }
 
     // Location methods

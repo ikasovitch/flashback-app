@@ -29,8 +29,7 @@ public class EditStoryActivity extends AppCompatActivity {
         findViewById(R.id.ReturnToMainFromEditStory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                launchMainActivity(user);
+                launchSettingsActivity();
             }
         });
 
@@ -74,12 +73,9 @@ public class EditStoryActivity extends AppCompatActivity {
         });
     }
 
-    public void launchMainActivity(FirebaseUser user) {
-        if (user != null) {
-            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-            intent.putExtra(ARG_NAME, user.getDisplayName());
-            startActivity(intent);
-        }
+    public void launchSettingsActivity() {
+        Intent intent = new Intent(getBaseContext(), SettingActivity.class);
+        startActivity(intent);
     }
 
     public void saveStory(View view) {
