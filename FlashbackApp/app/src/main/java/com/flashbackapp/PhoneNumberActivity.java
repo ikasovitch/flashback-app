@@ -11,10 +11,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CheckedTextView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,6 +37,7 @@ public class PhoneNumberActivity extends AppCompatActivity {
     private List<PhoneNumber> phone_number_by_name = new ArrayList<>();
     private ListView listView;
     ArrayAdapter<PhoneNumber> arrayAdapter;
+    boolean is_prime_number_exist = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +121,8 @@ public class PhoneNumberActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 phone_number_by_name.clear();
+                is_prime_number_exist = false;
+
                 DataSnapshot primary = dataSnapshot.child("primary");
                 DataSnapshot others = dataSnapshot.child("others");
                 for (DataSnapshot primaryChildSnapshot : primary.getChildren()) {
@@ -124,14 +130,13 @@ public class PhoneNumberActivity extends AppCompatActivity {
                     String phone_number = Objects.requireNonNull(primaryChildSnapshot.child("number").getValue()).toString();
                     PhoneNumber number_object = new PhoneNumber(name, phone_number, true);
                     phone_number_by_name.add(number_object);
-                    System.out.println(number_object.toString());
+                    is_prime_number_exist = true;
                 }
                 for (DataSnapshot othersChildSnapshot : others.getChildren()) {
                     String name = othersChildSnapshot.getKey();
                     String phone_number = Objects.requireNonNull(othersChildSnapshot.child("number").getValue()).toString();
                     PhoneNumber number_object = new PhoneNumber(name, phone_number, false);
                     phone_number_by_name.add(number_object);
-                    System.out.println(number_object.toString());
                 }
                 initListViewData();
             }
@@ -148,7 +153,7 @@ public class PhoneNumberActivity extends AppCompatActivity {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.add_phone_number, null);
+        final View popupView = inflater.inflate(R.layout.add_phone_number, null);
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -172,9 +177,29 @@ public class PhoneNumberActivity extends AppCompatActivity {
         btnNewAddPhoneNumber.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v) {
+                EditText phoneNameEditText = popupView.findViewById(R.id.phoneName);
+                EditText phoneNumberEditText = popupView.findViewById(R.id.phoneNumber);
+                CheckBox primeNumberCheckBox = popupView.findViewById(R.id.PrimeNumber);
+                String phoneName = phoneNameEditText.getText().toString();
+                String phoneNumber = phoneNumberEditText.getText().toString();
+                boolean isPrime = primeNumberCheckBox.isChecked();
+                if (isPrime) {
+                    if (is_prime_number_exist) {
+                        showToast(R.string.invalid_prime_number);
+                        return;
+                    }
+                    mDatabase.child("sos_numbers").child("primary").child(phoneName).child("number").setValue(phoneNumber);
+                } else {
+                    mDatabase.child("sos_numbers").child("others").child(phoneName).child("number").setValue(phoneNumber);
+                }
                 popupWindow.dismiss();
-                // TODO: Save to DB
             }
         });
     }
+    private void showToast(int resourceId) {
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(getApplicationContext(), resourceId, duration);
+        toast.show();
+    }
+
 }

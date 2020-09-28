@@ -39,6 +39,13 @@
             android:textDirection="anyRtl"
             />
 
+        <CheckBox
+            android:id="@+id/PrimeNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ראשי"
+            android:checked="false"/>
+
         <Button
             android:id="@+id/addANewPhoneNumber"
             android:layout_width="wrap_content"

@@ -126,11 +126,6 @@ public class SettingActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void launchEditPracticeApp() {
-        Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
-        startActivity(intent);
-    }
-
     public void onButtonSaveAppWindowClick(View view) {
 
         // inflate the layout of the popup window

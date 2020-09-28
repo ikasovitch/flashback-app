@@ -94,6 +94,7 @@
     <string name="invalid_address">כתובת לא חוקית</string>
     <string name="title_activity_settings_page">Settings</string>
     <string name="invalid_app">אפליקציה לא קיימת</string>
+    <string name="invalid_prime_number">מותר רק מספר ראשי אחד</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
