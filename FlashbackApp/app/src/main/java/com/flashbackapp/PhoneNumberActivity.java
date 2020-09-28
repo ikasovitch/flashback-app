@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -93,7 +94,6 @@ public class PhoneNumberActivity extends AppCompatActivity {
 
         for(int i=0;i< phone_number_by_name.size(); i++ )  {
             this.listView.setItemChecked(i,false);
-            System.out.println(phone_number_by_name.get(i).toString());
         }
     }
 
@@ -108,7 +108,7 @@ public class PhoneNumberActivity extends AppCompatActivity {
                 System.out.println(name_phone_number.toString());
             }
         }
-       // To DO Delete from db
+       // TODO: Delete from db
     }
 
 
@@ -166,6 +166,14 @@ public class PhoneNumberActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 popupWindow.dismiss();
                 return true;
+            }
+        });
+        Button btnNewAddPhoneNumber = (Button)popupView.findViewById(R.id.addANewPhoneNumber);
+        btnNewAddPhoneNumber.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+                // TODO: Save to DB
             }
         });
     }

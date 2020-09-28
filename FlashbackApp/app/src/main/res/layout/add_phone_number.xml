@@ -5,13 +5,47 @@
     android:layout_height="wrap_content"
     android:background="#62def8">
 
+    <LinearLayout
+        android:id="@+id/l1"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/light_blue"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
+
+    <EditText
+        android:id="@+id/phoneName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="30dp"
-        android:textSize="22sp"
-        android:text="This is a popup window."/>
+        android:autofillHints=""
+        android:cursorVisible="true"
+        android:ems="10"
+        android:hint="שם"
+        android:inputType="textPostalAddress"
+        android:singleLine="false"
+        android:textDirection="anyRtl"
+        />
+
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="מספר טלפון עם קוד"
+            android:textDirection="anyRtl"
+            />
+
+        <Button
+            android:id="@+id/addANewPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="הוסף"
+         />
+    </LinearLayout>
 
 </RelativeLayout>
