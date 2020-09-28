@@ -55,7 +55,7 @@ public class AddAddressActivity extends AppCompatActivity {
                             try {
                                 AddressModel.create(dataSnapshot, postalAddress, (float)location.getLongitude(), (float)location.getLatitude());
                                 showToast(R.string.address_create_successfully);
-                                Intent intent = new Intent(getBaseContext(), SettingActivity.class);
+                                Intent intent = new Intent(getBaseContext(), AddressManagerActivity.class);
                                 startActivity(intent);
                             } catch (IllegalArgumentException iae) {
                                 showToast(R.string.invalid_address);

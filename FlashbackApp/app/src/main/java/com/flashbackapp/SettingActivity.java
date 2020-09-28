@@ -2,7 +2,14 @@ package com.flashbackapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -53,7 +60,7 @@ public class SettingActivity extends AppCompatActivity {
         findViewById(R.id.buttonAddAddress).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent newAddressIntent = new Intent(v.getContext(), AddAddressActivity.class);
+                Intent newAddressIntent = new Intent(v.getContext(), AddressManagerActivity.class);
                 startActivity(newAddressIntent);
             }
         });
@@ -61,7 +68,7 @@ public class SettingActivity extends AppCompatActivity {
         findViewById(R.id.buttonEditPracticeApp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchEditPracticeApp();
+                onButtonSaveAppWindowClick(v);
             }
         });
     }
@@ -106,5 +113,40 @@ public class SettingActivity extends AppCompatActivity {
     private void launchEditPracticeApp() {
         Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
         startActivity(intent);
+    }
+
+    public void onButtonSaveAppWindowClick(View view) {
+
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.practice_app, null);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
+        Button btnNewAddPhoneNumber = (Button)popupView.findViewById(R.id.EditApp);
+        btnNewAddPhoneNumber.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+                // TODO: Save to DB
+            }
+        });
     }
 }
