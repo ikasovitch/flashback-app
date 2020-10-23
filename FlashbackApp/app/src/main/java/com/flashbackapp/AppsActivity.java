@@ -1,13 +1,12 @@
 package com.flashbackapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckedTextView;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,25 +22,13 @@ import java.util.Objects;
 
 public class AppsActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
-    private ListView listView;
     private static final String TAG = "AppsActivity";
     private List<AppObject> apps = new ArrayList<>();
-    ArrayAdapter<AppObject> arrayAdapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        this.listView = findViewById(R.id.listApplication);
-        this.listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, "onItemClick: " +position);
-                AppObject app = (AppObject) listView.getItemAtPosition(position);
-                PracticeTime(app.getAddress());
-            }
-        });
         findViewById(R.id.BackButtonMain).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,12 +44,37 @@ public class AppsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void initListViewData()  {
-        arrayAdapter = new ArrayAdapter<AppObject>(this, android.R.layout.simple_list_item_checked, apps);
-        this.listView.setAdapter(arrayAdapter);
 
-        for(int i=0;i< apps.size(); i++ )  {
-            this.listView.setItemChecked(i,false);
+    View.OnClickListener getOnClickDoSomething(final AppObject app)  {
+        return new View.OnClickListener() {
+            public void onClick(View v) {
+                PracticeTime(app.getAddress());
+            }
+        };
+    }
+
+    private void initListViewData() {
+        LinearLayout linear = findViewById(R.id.listApplication);
+        linear.removeAllViews();
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+        Button[] btn = new Button[apps.size()];
+        LinearLayout ll = new LinearLayout(this);;
+        for (int i = 0; i < apps.size(); i++) {
+            if (i % 4 == 0) {
+               ll = new LinearLayout(this);
+                ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                linear.addView(ll);
+            }
+            btn[i] = new Button(getApplicationContext());
+            btn[i].setText(apps.get(i).getName());
+            btn[i].setTextColor(Color.parseColor("#000000"));
+            btn[i].setTextSize(20);
+            btn[i].setHeight(150);
+            btn[i].setLayoutParams(param);
+            btn[i].setPadding(15, 5, 15, 5);
+            ll.addView(btn[i]);
+            btn[i].setOnClickListener(getOnClickDoSomething(apps.get(i)));
         }
     }
 
