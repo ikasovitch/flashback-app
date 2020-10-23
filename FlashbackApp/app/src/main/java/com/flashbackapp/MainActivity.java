@@ -53,6 +53,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private Location currentLocation;
     private String closestLocation;
+    Map.Entry<String, Object> closestLocationWithCoordinates;
     private String practiceApp;
     private DatabaseReference locationsDatabase;
 
@@ -127,11 +129,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         findViewById(R.id.ButtonLocations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=32.083340,34.779740&mode=walking");
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                  startActivity(mapIntent);
+                if (closestLocation == null)
+                    return;
+
+                Double latitude = (Double) ((HashMap)closestLocationWithCoordinates.getValue()).get("latitude");
+                Double longitude = (Double) ((HashMap)closestLocationWithCoordinates.getValue()).get("longitude");
+
+                float[] results = new float[3];
+                Location.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(), latitude, longitude, results);
+                float distanceInMeters = results[0];
+
+                if (distanceInMeters <= 500){
+                    Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%s,%s&mode=walking", latitude, longitude));
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(mapIntent);
+                    }
+                } else {
+                    showToast(R.string.too_far_cant_navigate);
                 }
             }
         });
@@ -158,6 +174,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             SMSEmergencyNumbers();
         }
 
+    }
+
+    private void showToast(int resourceId) {
+        int duration = Toast.LENGTH_LONG;
+        Toast toast = Toast.makeText(getApplicationContext(), resourceId, duration);
+        toast.show();
     }
 
     // Location methods
@@ -229,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             double distance = addressLocation.distanceTo(currentLocation);
             if (minimalLocation == null || distance < minimalDistance) {
                 minimalLocation = entry.getKey();
+                closestLocationWithCoordinates = entry;
                 minimalDistance = distance;
             }
         }
