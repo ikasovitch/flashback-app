@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         findViewById(R.id.ButtonLocations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=37.427858,-122.084657");
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=32.083340,34.779740&mode=walking");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 if (mapIntent.resolveActivity(getPackageManager()) != null) {
