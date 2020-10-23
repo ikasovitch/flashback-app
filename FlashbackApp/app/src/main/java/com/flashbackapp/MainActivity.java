@@ -127,9 +127,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         findViewById(R.id.ButtonLocations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-//                        Uri.parse("http://maps.google.com/maps?saddr=20.344,34.34&daddr=20.5666,45.345"));
-                // TODO navigate
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=37.427858,-122.084657");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                  startActivity(mapIntent);
+                }
             }
         });
 
@@ -324,6 +327,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
         if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (!hasPermission(Manifest.permission.READ_CALENDAR)) {
+            permissions.add(Manifest.permission.READ_CALENDAR);
         }
         if (permissions.size()>0) {
             requestPermissions(GetStringArray(permissions), CALL_SMS_PERMISSION_REQUESTS);
