@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
     private static final String ARG_NAME = "username";
-
+    private String method;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         // Configure Google Client
         configureGoogleClient();
+        method = getIntent().getStringExtra("method_name");
     }
 
     private void configureGoogleClient() {
@@ -129,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
         if (user != null) {
             Intent intent = new Intent(getBaseContext(), MainActivity.class);
             intent.putExtra(ARG_NAME, user.getDisplayName());
+            intent.putExtra("method_name", method);
             startActivity(intent);
         }
     }
