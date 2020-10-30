@@ -45,6 +45,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -179,6 +180,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private void showToast(int resourceId) {
         int duration = Toast.LENGTH_LONG;
         Toast toast = Toast.makeText(getApplicationContext(), resourceId, duration);
+        ViewGroup group = (ViewGroup) toast.getView();
+        TextView messageTextView = (TextView) group.getChildAt(0);
+        messageTextView.setTextSize(25);
         toast.show();
     }
 
