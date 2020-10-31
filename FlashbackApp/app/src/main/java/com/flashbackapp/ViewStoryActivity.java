@@ -1,16 +1,12 @@
 package com.flashbackapp;
-
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -20,6 +16,7 @@ public class ViewStoryActivity extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private static final String ARG_NAME = "username";
     FirebaseAuth firebaseAuth;
+    WebView storyWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,40 +30,36 @@ public class ViewStoryActivity extends AppCompatActivity {
                 launchMainActivity(user);
             }
         });
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        ShowStory();
+//
+//        firebaseAuth = FirebaseAuth.getInstance();
+//        ShowStory();
+        storyWebView = (WebView) findViewById(R.id.StoryView);
+        storyWebView.loadUrl("https://docs.google.com/document/d/1Qspkh5AJ19JwyXmpFS44eTY5DROiijTUfdnZsklKZCM/edit");
+        storyWebView.setWebViewClient(new client());
+        WebSettings ws = storyWebView.getSettings();
+        ws.setJavaScriptEnabled(true);
+        storyWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        storyWebView.clearCache(true);
+        storyWebView.clearHistory();
+//
+//        storyWebView.setDownloadListener(new DownloadListener() {
+//            @Override
+//            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+//                DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+//                req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+//            }
+//        });
     }
 
+    @Override
+    public void onBackPressed() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        launchMainActivity(user);
+    }
     public StorageReference GetReferenceToFirebaseFile() {
         // Create a storage reference from our app
         StorageReference storageRef = storage.getReferenceFromUrl("gs://shai-mfh-3586.appspot.com");
         return storageRef.child("story.txt");
-    }
-
-    public void PrintText(String story) {
-        TextView shai_story = findViewById(R.id.StoryText);
-        shai_story.setText(story);
-        shai_story.setVisibility(View.VISIBLE);
-        shai_story.setMovementMethod(new ScrollingMovementMethod());
-        System.out.print(story);
-    }
-
-    public void ShowStory() {
-        StorageReference pathReference = GetReferenceToFirebaseFile();
-        final long ONE_MEGABYTE = 1024 * 1024;
-        pathReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                String s = new String(bytes);
-                PrintText(s);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                System.out.println(exception.getMessage());
-            }
-        });
     }
 
     public void launchMainActivity(FirebaseUser user) {
@@ -77,4 +70,24 @@ public class ViewStoryActivity extends AppCompatActivity {
         }
     }
 
+    private class client extends WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            view.loadUrl("javascript:(function() { " +
+                    "document.getElementsByClassName(\"docs-ml-promotion-content\")[0].remove(); })()");
+        }
+
+    }
 }
