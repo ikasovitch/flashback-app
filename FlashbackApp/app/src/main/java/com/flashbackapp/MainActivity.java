@@ -175,6 +175,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             SMSEmergencyNumbers();
         }
 
+        if (method != null && method.equals("story")) {
+            launchShayStoryActivity();
+        }
+
     }
 
     private void showToast(int resourceId) {
@@ -419,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     String name = childSnapshot.getKey();
                     String phone_number = Objects.requireNonNull(childSnapshot.child("number").getValue()).toString();
-                    String image = Objects.requireNonNull(childSnapshot.child("picture").getValue()).toString();
+//                    String image = Objects.requireNonNull(childSnapshot.child("picture").getValue()).toString();
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + phone_number));
                     if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
