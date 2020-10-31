@@ -1,18 +1,9 @@
 package com.flashbackapp;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -22,20 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.List;
 
 public class SettingActivity extends AppCompatActivity {
     private static final String TAG = "SettingActivity";
     FirebaseAuth firebaseAuth;
     GoogleSignInClient googleSignInClient;
-    private DatabaseReference mDatabase;
-    String practice_app;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +30,8 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
         firebaseAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
 
-        GetCurrentApp();
         findViewById(R.id.buttonLogout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { signOut();
@@ -121,28 +101,10 @@ public class SettingActivity extends AppCompatActivity {
 
 
     private void launchEditStoryActivity() {
-        Intent intent = new Intent(getBaseContext(), EditStoryActivity.class);
-        startActivity(intent);
-    }
-
-    private void showToast(int resourceId) {
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(getApplicationContext(), resourceId, duration);
-        toast.show();
-    }
-
-    private void GetCurrentApp() {
-        DatabaseReference practice_app_child = mDatabase.child("practice_app");
-        practice_app_child.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                practice_app = (String) dataSnapshot.getValue();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "listener canceled", databaseError.toException());
-            }
-        });
+        String FileID = "1Qspkh5AJ19JwyXmpFS44eTY5DROiijTUfdnZsklKZCM";
+        String url = "https://docs.google.com/document/d/"+FileID;
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 }
