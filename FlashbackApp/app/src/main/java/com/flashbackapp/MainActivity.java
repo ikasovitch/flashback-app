@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
     private static final int INITIAL_REQUEST=1337;
-    private static final int METERS_THRESHOLD = 500;
+    private static final int METERS_THRESHOLD = 50;
 
     private Location currentLocation;
     private String closestLocation;
