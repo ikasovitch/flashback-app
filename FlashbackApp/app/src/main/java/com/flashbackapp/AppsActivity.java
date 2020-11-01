@@ -59,17 +59,17 @@ public class AppsActivity extends AppCompatActivity {
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
         Button[] btn = new Button[apps.size()];
-        LinearLayout ll = new LinearLayout(this);;
         for (int i = 0; i < apps.size(); i++) {
-            if (i % 4 == 0) {
-               ll = new LinearLayout(this);
-                ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                linear.addView(ll);
-            }
+            LinearLayout ll = new LinearLayout(this);
+            ll.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    ));
+            linear.addView(ll);
             btn[i] = new Button(getApplicationContext());
             btn[i].setText(apps.get(i).getName());
             btn[i].setTextColor(Color.parseColor("#000000"));
-            btn[i].setTextSize(20);
+            btn[i].setTextSize(15);
             btn[i].setHeight(150);
             btn[i].setLayoutParams(param);
             btn[i].setPadding(15, 5, 15, 5);

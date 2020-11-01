@@ -549,8 +549,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 boolean is_practice_time = true;
                 if (items != null && !items.isEmpty()) {
                     Event event = items.get(0);
-                    long start = event.getStart().getDateTime().getValue();
-                    long end = event.getEnd().getDateTime().getValue();
+                    DateTime startDateTime = event.getStart().getDateTime();
+                    if (startDateTime == null) {
+                        startDateTime = event.getStart().getDate();
+                    }
+                    DateTime endDateTime = event.getEnd().getDateTime();
+                    if (endDateTime == null) {
+                        endDateTime = event.getEnd().getDate();
+                    }
+                    long start = startDateTime.getValue();
+                    long end = endDateTime.getValue();
                     long now = new DateTime(System.currentTimeMillis()).getValue();
                     String events_data = event.getSummary();
 
