@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     Map.Entry<String, Object> closestLocationWithCoordinates;
     private String practiceApp;
     private DatabaseReference locationsDatabase;
-
+    String email = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(CalendarScopes.CALENDAR));
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         assert acct != null;
+        email = acct.getEmail();
         credential.setSelectedAccountName(acct.getEmail());
         firebaseAuth = FirebaseAuth.getInstance();
         setTitle();
@@ -155,12 +156,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         Button settingsBtn = findViewById(R.id.ButtonSetting);
         LinearLayout yourRelLay = (LinearLayout) settingsBtn.getParent();
         settingsBtn.setBackground(yourRelLay.getBackground());
-        settingsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchShaySettingActivity();
-            }
-        });
+        if (email.equals("shaimishaly93@gmail.com")) {
+            settingsBtn.setVisibility(View.GONE);
+        } else {
+            settingsBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    launchShaySettingActivity();
+                }
+            });
+        }
 
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
