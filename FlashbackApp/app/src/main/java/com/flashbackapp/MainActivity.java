@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.flashbackapp.data.CurrentLocation;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -204,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
 
         currentLocation = new Location ("currentLocation");
+        CurrentLocation.setCurrentLocation(currentLocation);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
@@ -248,6 +250,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onLocationChanged(Location location) {
         currentLocation.setLatitude(location.getLatitude());
         currentLocation.setLongitude(location.getLongitude());
+        CurrentLocation.setCurrentLocation(currentLocation);
+
         updateClosestLocation();
         printClosetsLocation();
     }

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.flashbackapp.data.AddressModel;
+import com.flashbackapp.data.CurrentLocation;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class AddAddressActivity extends AppCompatActivity {
 
@@ -53,7 +55,12 @@ public class AddAddressActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) {
                             try {
-                                AddressModel.create(dataSnapshot, postalAddress, (float)location.getLongitude(), (float)location.getLatitude());
+                                AddressModel.create(dataSnapshot,
+                                        postalAddress,
+                                        (float)location.getLongitude(),
+                                        (float)location.getLatitude(),
+                                        true
+                                );
                                 showToast(R.string.address_create_successfully);
                                 Intent intent = new Intent(getBaseContext(), AddressManagerActivity.class);
                                 startActivity(intent);
@@ -73,6 +80,60 @@ public class AddAddressActivity extends AppCompatActivity {
                 });
             }
         });
+
+
+        Button createNewCurrentAddressButton = (Button)findViewById(R.id.btnNewCurrentLocation);
+        createNewCurrentAddressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText addressNameEditText = findViewById(R.id.addressNameText);
+
+                final String addressName = addressNameEditText.getText().toString();
+                final Location currentLocation = CurrentLocation.getCurrentLocation();
+                try {
+                    final String addressFromLocation = getAddress(currentLocation);
+                    final DatabaseReference databaseReference = AddressModel.getByKey(addressName);
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) {
+                                try {
+                                    AddressModel.create(dataSnapshot, addressFromLocation,
+                                            (float)currentLocation.getLongitude(),
+                                            (float)currentLocation.getLatitude(), false);
+                                    showToast(R.string.address_create_successfully);
+                                    Intent intent = new Intent(getBaseContext(), AddressManagerActivity.class);
+                                    startActivity(intent);
+                                } catch (IllegalArgumentException iae) {
+                                    showToast(R.string.invalid_address);
+                                }
+
+                            } else {
+                                showToast(R.string.address_already_exists);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                } catch (IOException e) {
+                    showToast(R.string.error_in_creating_address);
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private String getAddress(Location location) throws IOException {
+        Geocoder geocoder = new Geocoder(this, Locale.forLanguageTag("he"));
+        List<Address> addresses  = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(), 1);
+        if(addresses.size() == 0){
+            return "...";
+        }
+        String address = addresses.get(0).getAddressLine(0);
+        return address;
     }
 
     private void showToast(int resourceId) {

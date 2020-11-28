@@ -85,6 +85,7 @@
     <string name="city_name_hint">הכנס את שם העיר</string>
     <string name="street_name_hint">הכנס את שם הרחוב</string>
     <string name="create_address_text">צור כתובת חדשה</string>
+    <string name="create_current_location_text">צור כתובת למיקום נוכחי</string>
     <string name="address_hint">עיר, רחוב ,מספר בית</string>
     <string name="enter_longitude_hint">קו אורך ג׳י פי אס</string>
     <string name="enter_latitude_hint">קו רוחב ג׳י פי אס</string>
@@ -92,6 +93,7 @@
     <string name="address_already_exists">כתובת כבר קיימת</string>
     <string name="address_create_successfully">כתובת נוצרה בהצלחה!</string>
     <string name="invalid_address">כתובת לא חוקית</string>
+    <string name="error_in_creating_address">שגיאה ביצירת כתובת נוכחית, נסה להכניס את הכתובת ידנית</string>
     <string name="title_activity_settings_page">Settings</string>
     <string name="invalid_app">אפליקציה לא קיימת</string>
     <string name="invalid_prime_number">מותר רק מספר ראשי אחד</string>

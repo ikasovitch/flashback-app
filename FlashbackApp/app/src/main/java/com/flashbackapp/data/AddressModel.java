@@ -11,8 +11,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AddressModel {
 
-    public static Address create(DataSnapshot snapshot, String addressParts, float longitude, float latitude) {
-        final Address address = new Address(addressParts, longitude, latitude);
+    public static Address create(DataSnapshot snapshot, String addressParts, float longitude, float latitude, boolean shouldValidate) {
+        final Address address = new Address(addressParts, longitude, latitude, shouldValidate);
         snapshot.getRef().setValue(address);
         return address;
     }

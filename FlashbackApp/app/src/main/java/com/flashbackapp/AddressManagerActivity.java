@@ -35,11 +35,6 @@ public class AddressManagerActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         this.listView = findViewById(R.id.listApplication);
 
-        // CHOICE_MODE_NONE: (Default)
-        // (listView.setItemChecked(..) doest not work with CHOICE_MODE_NONE).
-        // CHOICE_MODE_SINGLE:
-        // CHOICE_MODE_MULTIPLE:
-        // CHOICE_MODE_MULTIPLE_MODAL:
         this.listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

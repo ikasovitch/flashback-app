@@ -13,13 +13,12 @@
 
         <Button
             android:id="@+id/ReturnToMainFromEditStory"
-            android:layout_width="wrap_content"
+            android:layout_width="47dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:background="@color/light_milk"
-            android:stateListAnimator="@null"
             android:drawableStart="@drawable/back_icon"
-            />
+            android:stateListAnimator="@null" />
 
        <Button
         android:id="@+id/addAddress"
@@ -30,12 +29,11 @@
         />
 
         <Button
-        android:id="@+id/deleteAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="מחק"
-        />
+            android:id="@+id/deleteAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="מחק" />
 
     </LinearLayout>
 
