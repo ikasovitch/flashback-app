@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +7,8 @@
     android:layoutDirection="rtl"
     android:textDirection="rtl"
     android:background="@color/light_milk"
-    tools:context=".AddAddressActivity">
+    tools:context=".AddAddressActivity"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/addressNameText"
@@ -26,6 +27,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.309" />
+
+    <CheckBox
+        android:id="@+id/simpleCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="כתובת נוכחית"/>
 
     <EditText
         android:id="@+id/postalAddressText"
@@ -49,14 +56,4 @@
         app:layout_constraintStart_toStartOf="@+id/addressNameText"
         app:layout_constraintTop_toBottomOf="@id/postalAddressText" />
 
-    <Button
-        android:id="@+id/btnNewCurrentLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/create_current_location_text"
-        app:layout_constraintStart_toStartOf="@+id/addressNameText"
-        app:layout_constraintTop_toBottomOf="@id/btnNewAddress" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

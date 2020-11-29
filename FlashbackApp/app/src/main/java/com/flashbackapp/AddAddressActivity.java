@@ -8,6 +8,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,98 +34,116 @@ public class AddAddressActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTitle(R.string.enter_address_title);
         setContentView(R.layout.activity_add_address);
+        CheckBox is_current_view = findViewById(R.id.simpleCheckBox);
+        is_current_view.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           @Override
+           public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+               EditText postalAddressEditText = findViewById(R.id.postalAddressText);
+               if (isChecked) {
+                   postalAddressEditText.setVisibility(View.GONE);
+                } else {
+                   postalAddressEditText.setVisibility(View.VISIBLE);
+                }
+           }
+       });
 
         Button createNewAddressButton = (Button)findViewById(R.id.btnNewAddress);
         createNewAddressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                EditText addressNameEditText = findViewById(R.id.addressNameText);
-                EditText postalAddressEditText = findViewById(R.id.postalAddressText);
-
-                final String addressName = addressNameEditText.getText().toString();
-                final String postalAddress = postalAddressEditText.getText().toString();
-                final Location location;
-                try {
-                    location = getLocationFromAddress(postalAddress);
-                } catch (IOException e) {
-                    showToast(R.string.invalid_address);
-                    return;
+                CheckBox is_current_address = findViewById(R.id.simpleCheckBox);
+                boolean checked = is_current_address.isChecked();
+                if (checked) {
+                    saveCurrentLocation();
+                } else {
+                    saveNewAddress();
                 }
-                final DatabaseReference databaseReference = AddressModel.getByKey(addressName);
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.exists()) {
-                            try {
-                                AddressModel.create(dataSnapshot,
-                                        postalAddress,
-                                        (float)location.getLongitude(),
-                                        (float)location.getLatitude(),
-                                        true
-                                );
-                                showToast(R.string.address_create_successfully);
-                                Intent intent = new Intent(getBaseContext(), AddressManagerActivity.class);
-                                startActivity(intent);
-                            } catch (IllegalArgumentException iae) {
-                                showToast(R.string.invalid_address);
-                            }
-
-                        } else {
-                            showToast(R.string.address_already_exists);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
             }
         });
+    }
 
+    public void saveNewAddress() {
+        EditText addressNameEditText = findViewById(R.id.addressNameText);
+        EditText postalAddressEditText = findViewById(R.id.postalAddressText);
 
-        Button createNewCurrentAddressButton = (Button)findViewById(R.id.btnNewCurrentLocation);
-        createNewCurrentAddressButton.setOnClickListener(new View.OnClickListener() {
+        final String addressName = addressNameEditText.getText().toString();
+        final String postalAddress = postalAddressEditText.getText().toString();
+        final Location location;
+        try {
+            location = getLocationFromAddress(postalAddress);
+        } catch (IOException e) {
+            showToast(R.string.invalid_address);
+            return;
+        }
+        final DatabaseReference databaseReference = AddressModel.getByKey(addressName);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                EditText addressNameEditText = findViewById(R.id.addressNameText);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    try {
+                        AddressModel.create(dataSnapshot,
+                                postalAddress,
+                                (float) location.getLongitude(),
+                                (float) location.getLatitude(),
+                                true
+                        );
+                        showToast(R.string.address_create_successfully);
+                        Intent intent = new Intent(getBaseContext(), AddressManagerActivity.class);
+                        startActivity(intent);
+                    } catch (IllegalArgumentException iae) {
+                        showToast(R.string.invalid_address);
+                    }
 
-                final String addressName = addressNameEditText.getText().toString();
-                final Location currentLocation = CurrentLocation.getCurrentLocation();
-                try {
-                    final String addressFromLocation = getAddress(currentLocation);
-                    final DatabaseReference databaseReference = AddressModel.getByKey(addressName);
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (!dataSnapshot.exists()) {
-                                try {
-                                    AddressModel.create(dataSnapshot, addressFromLocation,
-                                            (float)currentLocation.getLongitude(),
-                                            (float)currentLocation.getLatitude(), false);
-                                    showToast(R.string.address_create_successfully);
-                                    Intent intent = new Intent(getBaseContext(), AddressManagerActivity.class);
-                                    startActivity(intent);
-                                } catch (IllegalArgumentException iae) {
-                                    showToast(R.string.invalid_address);
-                                }
-
-                            } else {
-                                showToast(R.string.address_already_exists);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                } catch (IOException e) {
-                    showToast(R.string.error_in_creating_address);
-                    e.printStackTrace();
+                } else {
+                    showToast(R.string.address_already_exists);
                 }
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
         });
+    }
+
+
+    public void saveCurrentLocation() {
+        EditText addressNameEditText = findViewById(R.id.addressNameText);
+
+        final String addressName = addressNameEditText.getText().toString();
+        final Location currentLocation = CurrentLocation.getCurrentLocation();
+        try {
+            final String addressFromLocation = getAddress(currentLocation);
+            final DatabaseReference databaseReference = AddressModel.getByKey(addressName);
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        try {
+                            AddressModel.create(dataSnapshot, addressFromLocation,
+                                    (float)currentLocation.getLongitude(),
+                                    (float)currentLocation.getLatitude(), false);
+                            showToast(R.string.address_create_successfully);
+                            Intent intent = new Intent(getBaseContext(), AddressManagerActivity.class);
+                            startActivity(intent);
+                        } catch (IllegalArgumentException iae) {
+                            showToast(R.string.invalid_address);
+                        }
+
+                    } else {
+                        showToast(R.string.address_already_exists);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } catch (IOException e) {
+            showToast(R.string.error_in_creating_address);
+            e.printStackTrace();
+        }
     }
 
     private String getAddress(Location location) throws IOException {
