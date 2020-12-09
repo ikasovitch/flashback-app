@@ -107,7 +107,6 @@
                 android:layout_margin="5dp"
                 android:textSize="11sp"
                 android:background="@color/light_red"
-                android:drawableStart="@drawable/avi_pic_small"
                 android:paddingStart="17dp"
                 android:paddingEnd="10dp"
                 android:text="שיחת חירום"
