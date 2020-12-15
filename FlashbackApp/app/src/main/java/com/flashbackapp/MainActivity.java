@@ -438,6 +438,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private void SMSEmergencyNumbers() {
         final String content = getResources().getString(R.string.emergency_sms_content);
+        final String locationInMaps = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s",
+                currentLocation.getLatitude(),
+                currentLocation.getLongitude());
         DatabaseReference primary = mDatabase.child("sos_numbers").child("primary");
         DatabaseReference others = mDatabase.child("sos_numbers").child("others");
 
@@ -450,11 +453,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         return;
                     }
                     String phoneNumber = Objects.requireNonNull(childSnapshot.child("number").getValue()).toString();
-                    String locationInMaps = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s",
-                            currentLocation.getLatitude(),
-                            currentLocation.getLongitude());
                     SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(phoneNumber, null, content + locationInMaps, null, null);
+                    smsManager.sendTextMessage(phoneNumber, null, content, null, null);
+                    smsManager.sendTextMessage(phoneNumber, null, locationInMaps, null, null);
                     // ...
                 }
             }
@@ -474,12 +475,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         return;
                     }
                     String phoneNumber = Objects.requireNonNull(childSnapshot.child("number").getValue()).toString();
-                    String locationInMaps = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s",
-                            currentLocation.getLatitude(),
-                            currentLocation.getLongitude());
                     SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(phoneNumber, null, content + locationInMaps, null, null);
-                    // ...
+                    smsManager.sendTextMessage(phoneNumber, null, content, null, null);
+                    smsManager.sendTextMessage(phoneNumber, null, locationInMaps, null, null);
                 }
             }
 

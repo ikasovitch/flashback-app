@@ -98,7 +98,7 @@
     <string name="invalid_app">אפליקציה לא קיימת</string>
     <string name="invalid_prime_number">מותר רק מספר ראשי אחד</string>
     <string name="too_far_cant_navigate">אתה במקום לא מוכר? השתמש בכפתור שיחת חירום</string>
-    <string name="emergency_sms_content">הי זה שי - אני זקוק לעזרה. אני נמצא ב: </string>
+    <string name="emergency_sms_content">היי זה שי - אני זקוק לעזרה. אני נמצא ב: </string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
